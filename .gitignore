@@ -1,0 +1,19 @@
+# Node Modules
+node_modules/
+server/node_modules/
+mobile/DailyExpense/node_modules/
+
+# Env files
+server/.env
+mobile/DailyExpense/.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# React Native build folders
+mobile/DailyExpense/android/.gradle
+mobile/DailyExpense/android/app/build
+mobile/DailyExpense/ios/Pods/
+mobile/DailyExpense/ios/build/
+mobile/DailyExpense/build/
