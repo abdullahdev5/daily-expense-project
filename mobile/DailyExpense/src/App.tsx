@@ -5,33 +5,62 @@
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import {
+  StatusBar,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from 'react-native';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import { ThemeProvider, useTheme } from './theme/ThemeProvider';
+import LinearGradient from 'react-native-linear-gradient';
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  return (
+    <ThemeProvider>
+      <SafeAreaProvider>
+        <AppStatusBar />
+        <AppContent />
+      </SafeAreaProvider>
+    </ThemeProvider>
+  );
+}
+
+function AppStatusBar() {
+  const { isLight } = useTheme();
 
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
+    <StatusBar
+      barStyle={isLight ? 'dark-content' : 'light-content'}
+      translucent
+      backgroundColor="transparent"
+    />
   );
 }
 
 function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
+  const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
+    <View
+      style={[{ 
+        backgroundColor: theme.colors.background,
+        paddingTop: insets.top
+      }, styles.container]}
+    >
+      <Text
+        style={{
+          color: theme.colors.primary,
+          fontSize: theme.fontSize.small,
+        }}
+      >
+        Welcome to DailyExpense
+      </Text>
     </View>
   );
 }
@@ -39,6 +68,8 @@ function AppContent() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
