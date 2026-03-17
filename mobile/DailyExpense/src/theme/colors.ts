@@ -19,8 +19,8 @@ export const darkColors = {
   orange: colors.orange,
   red: colors.red,
   yellow: colors.yellow,
-  primaryGradient: [colors.orange, colors.red],
-  secondaryGradient: [colors.yellow, colors.orange],
+  primaryGradient: [colors.yellow, colors.red],
+  secondaryGradient: [colors.orange, colors.red],
   bgGradient: [colors.orange, 'transparent'],
 };
 
@@ -35,7 +35,7 @@ export const lightColors = {
   orange: colors.orange,
   red: colors.red,
   yellow: colors.yellow,
-  primaryGradient: [colors.orange, colors.red],
-  secondaryGradient: [colors.yellow, colors.orange],
+  primaryGradient: [colors.yellow, colors.red],
+  secondaryGradient: [colors.orange, colors.red],
   bgGradient: [colors.orange, 'transparent'],
 };
