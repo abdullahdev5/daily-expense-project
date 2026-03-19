@@ -1,4 +1,4 @@
-const colors = {
+export const colors = {
   orange: '#E3823C',
   red: '#E33C3C',
   yellow: '#E3B53C',
@@ -21,6 +21,7 @@ export const darkColors = {
   error: colors.red,
   success: colors.green,
   warning: colors.yellow,
+  inputBorder: colors.white,
   primaryGradient: [colors.yellow, colors.red],
   secondaryGradient: [colors.orange, colors.red],
   bgGradient: [colors.orange, 'transparent'],
@@ -38,6 +39,7 @@ export const lightColors = {
   error: colors.red,
   success: colors.green,
   warning: colors.yellow,
+  border: colors.black,
   primaryGradient: [colors.yellow, colors.red],
   secondaryGradient: [colors.orange, colors.red],
   bgGradient: [colors.orange, 'transparent'],
