@@ -12,3 +12,7 @@ export type FontWeight = TextStyle['fontWeight'];
 
 // TextInput Style
 export type TextInputBorder = "outlined" | "underlined";
+
+
+// Icon
+export type IconProvider = 'Material' | 'Community' | 'FontAwesome' | 'Image';
