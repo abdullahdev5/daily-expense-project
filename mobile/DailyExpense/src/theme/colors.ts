@@ -1,13 +1,14 @@
 export const colors = {
+  yellow: '#E3B53C',
   orange: '#E3823C',
   red: '#E33C3C',
-  yellow: '#E3B53C',
   white: '#ffffff',
   black: '#000000',
   green: '#1ab932',
   blue: '#1877F2',
   lightDark: '#23203F',
   dark: '#141326',
+  transparentYellow: 'rgba(227, 181, 60, 0.3)'
 };
 
 export const darkColors = {
@@ -24,6 +25,7 @@ export const darkColors = {
   warning: colors.yellow,
   info: colors.yellow,
   inputBorder: colors.white,
+  rippleColor: colors.transparentYellow,
   primaryGradient: [colors.yellow, colors.red],
   secondaryGradient: [colors.orange, colors.red],
   bgGradient: [colors.orange, 'transparent'],
@@ -42,7 +44,8 @@ export const lightColors = {
   success: colors.green,
   warning: colors.yellow,
   info: colors.yellow,
-  border: colors.black,
+  inputBorder: colors.black,
+  rippleColor: colors.transparentYellow,
   primaryGradient: [colors.yellow, colors.red],
   secondaryGradient: [colors.orange, colors.red],
   bgGradient: [colors.orange, 'transparent'],

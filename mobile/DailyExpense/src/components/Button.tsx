@@ -1,12 +1,23 @@
-import { View, Pressable, ColorValue, ViewStyle, TouchableOpacity, StyleProp } from 'react-native';
+import {
+  View,
+  Pressable,
+  ColorValue,
+  ViewStyle,
+  TouchableOpacity,
+  StyleProp,
+  GestureResponderEvent,
+} from 'react-native';
 import React, { ReactNode } from 'react';
 import { useTheme } from '../theme/ThemeProvider';
 import LinearGradient from 'react-native-linear-gradient';
 import AppText from './Text';
+import AppIcon from './Icon';
+import { colors } from '../theme/colors';
+import { IconButtonProps } from 'react-native-vector-icons/Icon';
 
 type AppButtonProps = {
   children: ReactNode;
-  onPress: () => void;
+  onPress: (event: GestureResponderEvent) => void;
   width?: number;
   height?: number;
   fullWidth?: boolean;
@@ -14,7 +25,6 @@ type AppButtonProps = {
   foregroundColor?: ColorValue;
   borderRadius?: number;
   gradientColors?: string[];
-  wrapperStyle?: StyleProp<ViewStyle>;
 };
 
 const AppButton = ({
@@ -27,7 +37,6 @@ const AppButton = ({
   foregroundColor = 'white',
   borderRadius,
   gradientColors,
-  wrapperStyle,
 }: AppButtonProps) => {
   const { theme } = useTheme();
 
@@ -36,7 +45,9 @@ const AppButton = ({
 
   const content =
     typeof children == 'string' ? (
-      <AppText style={{ color: foregroundColor ?? 'white' }}>{children}</AppText>
+      <AppText style={{ color: foregroundColor ?? 'white' }}>
+        {children}
+      </AppText>
     ) : (
       children
     );
@@ -57,7 +68,7 @@ const AppButton = ({
       activeOpacity={0.5}
       style={{
         width: fullWidth ? '100%' : width,
-        height: height
+        height: height,
       }}
     >
       {!backgroundColor ? (
@@ -76,4 +87,40 @@ const AppButton = ({
   );
 };
 
+
+// IconButton
+type AppIconButtonProps = React.ComponentProps<typeof AppIcon> & {
+  onPress: (event: GestureResponderEvent) => void;
+  buttonStyle?: StyleProp<ViewStyle>;
+  rippleColor?: string; // Optional: custom flash color
+};
+
+const AppIconButton = ({
+  onPress,
+  buttonStyle,
+  provider = 'Material', // Default to Material
+  rippleColor,// = 'rgba(255, 255, 255, 0.3)',
+  ...iconProps // Spreads name, size, color, iconSource, etc.
+}: AppIconButtonProps) => {
+  const { theme } = useTheme();
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        {
+          borderRadius: '50%',
+          padding: 10,
+          alignSelf: 'flex-start',
+          backgroundColor: pressed ? (rippleColor ?? theme.colors.rippleColor) : 'transparent',
+        },
+        buttonStyle,
+      ]}
+    >
+      {/* We pass all remaining props directly to our universal AppIcon */}
+      <AppIcon provider={provider} {...iconProps} />
+    </Pressable>
+  );
+};
+
 export default AppButton;
+export { AppIconButton };

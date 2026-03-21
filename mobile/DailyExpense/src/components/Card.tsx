@@ -1,7 +1,6 @@
 import React, { ReactNode, useMemo } from 'react';
 import {
   View,
-  StyleSheet,
   ViewStyle,
   StyleProp,
   Platform,
@@ -15,7 +14,6 @@ type AppCardProps = {
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   borderRadius?: number;
-  circular: boolean;
   shadow?: boolean;
   shadowColor?: ColorValue;
   elevation?: number; // Android shadow
