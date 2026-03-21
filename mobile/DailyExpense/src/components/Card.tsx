@@ -10,12 +10,12 @@ import {
   ColorValue,
 } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
-import { BlurView, BlurViewProps } from '@react-native-community/blur';
 
 type AppCardProps = {
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   borderRadius?: number;
+  circular: boolean;
   shadow?: boolean;
   shadowColor?: ColorValue;
   elevation?: number; // Android shadow

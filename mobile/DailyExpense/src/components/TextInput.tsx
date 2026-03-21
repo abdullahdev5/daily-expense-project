@@ -29,6 +29,7 @@ type AppTextInputProps = TextInputProps & {
   placeholderTextColor?: ColorValue;
   error?: string;
   errorTextColor?: string;
+  helperText?: string;
   titleOuter?: string;
   textColor?: ColorValue;
   filled?: boolean;
@@ -54,6 +55,7 @@ const AppTextInput = ({
   placeholderTextColor = colors.white,
   error,
   errorTextColor,
+  helperText,
   titleOuter,
   textColor = colors.white,
   keyboardType = 'default',
@@ -102,8 +104,8 @@ const AppTextInput = ({
         },
         android: {
           shadowColor: focussedBorderColor ?? theme.colors.primary,
-          elevation: isFocussed ? 10 : 0
-        }
+          elevation: isFocussed ? 10 : 0,
+        },
       }) as ViewStyle,
     [isFocussed, focussedBorderColor],
   );
@@ -149,9 +151,25 @@ const AppTextInput = ({
         {/* suffixIcon */}
         {suffixIcon && suffixIcon}
       </Row>
+      {/* helper text */}
+      {helperText && (
+        <AppText
+          style={{ paddingStart: 10 }}
+          color={errorTextColor ?? theme.colors.info}
+          fontSize={theme.fontSize.xSmall}
+        >
+          {helperText}
+        </AppText>
+      )}
       {/* error */}
       {hasError && (
-        <AppText color={errorTextColor ?? theme.colors.error}>{error}</AppText>
+        <AppText
+          style={{ paddingStart: 10 }}
+          color={errorTextColor ?? theme.colors.error}
+          fontSize={theme.fontSize.xSmall}
+        >
+          {error}
+        </AppText>
       )}
     </Column>
   );
