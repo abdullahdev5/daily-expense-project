@@ -32,8 +32,4 @@ export interface RegisterUserDTO {
   password: string;
 }
 
-export enum AuthProvider {
-  google = "google",
-  facebook = "facebook",
-  email = "email"
-}
+export type AuthProvider = "google" | "facebook" | "email";

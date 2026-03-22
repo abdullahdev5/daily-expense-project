@@ -31,7 +31,7 @@ class AuthService {
 
     const user = await User.create({
       ...data,
-      provider: AuthProvider.email
+      provider: 'email'
     });
 
     return {
@@ -67,7 +67,7 @@ class AuthService {
         name: googleUser.name || "Google User",
         email: googleUser.email,
         picture: googleUser.picture || null,
-        provider: AuthProvider.google,
+        provider: 'google',
         providerId: googleUser.sub,
       });
     }
@@ -88,7 +88,7 @@ class AuthService {
         name: fbUser.name,
         email: fbUser.email,
         picture: fbUser.picture,
-        provider: AuthProvider.facebook,
+        provider: 'facebook',
         providerId: fbUser.id
       });
     }

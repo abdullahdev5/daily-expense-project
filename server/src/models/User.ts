@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema<
     provider: {
       type: String,
       required: true,
-      enum: Object.values(AuthProvider)
+      enum: ['google', 'facebook', 'email']
     },
     providerId: {
       type: String,
