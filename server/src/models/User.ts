@@ -25,7 +25,25 @@ const userSchema = new mongoose.Schema<
       sparse: true
     }
   },
-  { timestamps: true },
+  { 
+    timestamps: true,
+    toJSON: {
+      transform: function (_, ret: any) {
+        ret.id = ret._id.toString();
+
+        delete ret._id;
+        delete ret.__v;
+      }
+    },
+    toObject: {
+      transform: function (_, ret: any) {
+        ret.id = ret._id.toString();
+        
+        delete ret._id;
+        delete ret.__v;
+      }
+    }
+  },
 );
 
 userSchema.pre("save", async function () {

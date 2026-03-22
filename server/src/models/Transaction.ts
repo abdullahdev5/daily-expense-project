@@ -1,7 +1,10 @@
 import mongoose, { QueryFilter } from "mongoose";
-import { ITransaction, ITransactionQueryHelpers, TransactionType } from "../types/transaction";
+import {
+  ITransaction,
+  ITransactionQueryHelpers,
+  TransactionType,
+} from "../types/transaction";
 import { MODEL_NAMES } from "../constants/dbConstants";
-
 
 const transactionSchema = new mongoose.Schema<
   ITransaction,
@@ -26,7 +29,7 @@ const transactionSchema = new mongoose.Schema<
     type: {
       type: String,
       required: true,
-      enum: ['income', 'expense']
+      enum: ["income", "expense"],
     },
     date: { type: Date, defaukt: Date.now },
     paymentMethod: {
@@ -65,22 +68,37 @@ const transactionSchema = new mongoose.Schema<
     // aiAnomaly: Boolean,
     // importantScore: Number,
   },
-  { timestamps: true },
-);
+  {
+    timestamps: true,
+    toJSON: {
+      transform: function (_, ret: any) {
+        ret.id = ret._id.toString();
 
+        delete ret._id;
+        delete ret.__v;
+      },
+    },
+    toObject: {
+      transform: function (_, ret: any) {
+        ret.id = ret._id.toString();
+
+        delete ret._id;
+        delete ret.__v;
+      },
+    },
+  },
+);
 
 transactionSchema.query.query = function (
   this: mongoose.Query<
-      mongoose.HydratedDocument<ITransaction>[],
-      mongoose.HydratedDocument<ITransaction>,
-      ITransactionQueryHelpers
-    >,
-  filters: QueryFilter<ITransaction>
+    mongoose.HydratedDocument<ITransaction>[],
+    mongoose.HydratedDocument<ITransaction>,
+    ITransactionQueryHelpers
+  >,
+  filters: QueryFilter<ITransaction>,
   // this: any,
   // filters: any
 ) {
-
-
   if (filters.title) {
     this.where({
       title: { $regex: filters.title, $options: "i" },
@@ -99,14 +117,13 @@ transactionSchema.query.query = function (
     this.where({
       date: {
         $gte: new Date(filters.startDate),
-        $lte: new Date(filters.endDate)
-      }
+        $lte: new Date(filters.endDate),
+      },
     });
   }
 
   return this;
 };
-
 
 export const Transaction = mongoose.model<
   ITransaction,

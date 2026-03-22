@@ -7,35 +7,56 @@ const walletSchema = new mongoose.Schema<
   IWallet,
   mongoose.Model<IWallet, {}, IWalletMethods>,
   IWalletMethods
->({
-  userId: {
-    type: mongoose.Schema.ObjectId,
-    ref: MODEL_NAMES.USER,
-    required: true,
-  },
-  name: { type: String, required: true, trim: true },
-  icon: { type: String, default: null },
-  balance: { type: Number, default: 0 },
+>(
+  {
+    userId: {
+      type: mongoose.Schema.ObjectId,
+      ref: MODEL_NAMES.USER,
+      required: true,
+    },
+    name: { type: String, required: true, trim: true },
+    icon: { type: String, default: null },
+    balance: { type: Number, default: 0 },
 
-  currency: { type: String, default: "USD" },
-  createdAt: { type: Date, default: Date.now },
-});
+    currency: { type: String, default: "USD" },
+    createdAt: { type: Date, default: Date.now },
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      transform: function (_, ret: any) {
+        ret.id = ret._id.toString();
+
+        delete ret._id;
+        delete ret.__v;
+      },
+    },
+    toObject: {
+      transform: function (_, ret: any) {
+        ret.id = ret._id.toString();
+
+        delete ret._id;
+        delete ret.__v;
+      },
+    },
+  },
+);
 
 // Methods
 walletSchema.methods.updatebalance = async function (
   type: string,
   amount: number,
 ): Promise<IWallet> {
-  if (type == 'income') {
+  if (type == "income") {
     this.balance += amount;
-  } else if (type == 'expense') {
+  } else if (type == "expense") {
     this.balance -= amount;
   }
 
   return await this.save();
 };
 
-export const Wallet = mongoose.model<IWallet, mongoose.Model<IWallet, {}, IWalletMethods>>(
-  MODEL_NAMES.WALLET,
-  walletSchema,
-);
+export const Wallet = mongoose.model<
+  IWallet,
+  mongoose.Model<IWallet, {}, IWalletMethods>
+>(MODEL_NAMES.WALLET, walletSchema);
