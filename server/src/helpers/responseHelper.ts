@@ -6,8 +6,10 @@ export const responseHelper = {
         res.status(200).json({
             success: true,
             message,
-            token,
-            user
+            data: {
+                token,
+                user
+            }
         });
     },
 
