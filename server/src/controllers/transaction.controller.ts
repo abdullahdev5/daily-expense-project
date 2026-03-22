@@ -26,7 +26,7 @@ const createTransaction = async (
 
     const bodyData: CreateTransactionDTO = {
       title: reqBody.title,
-      description: reqBody.description,
+      description: reqBody.description || null,
       amount: reqBody.amount,
       categoryId: reqBody.categoryId,
       type: reqBody.type,

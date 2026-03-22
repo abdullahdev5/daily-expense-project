@@ -13,7 +13,7 @@ export interface IWallet extends Document {
 
 export interface IWalletMethods {
 
-    updatebalance(type: TransactionType, amount: number): Promise<IWallet>;
+    updatebalance(type: string, amount: number): Promise<IWallet>;
 
 }
 

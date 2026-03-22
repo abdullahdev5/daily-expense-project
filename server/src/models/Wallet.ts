@@ -23,12 +23,12 @@ const walletSchema = new mongoose.Schema<
 
 // Methods
 walletSchema.methods.updatebalance = async function (
-  type: TransactionType,
+  type: string,
   amount: number,
 ): Promise<IWallet> {
-  if (type == TransactionType.income) {
+  if (type == 'income') {
     this.balance += amount;
-  } else if (type == TransactionType.expense) {
+  } else if (type == 'expense') {
     this.balance -= amount;
   }
 

@@ -26,7 +26,7 @@ const transactionSchema = new mongoose.Schema<
     type: {
       type: String,
       required: true,
-      enum: Object.values(TransactionType),
+      enum: ['income', 'expense']
     },
     date: { type: Date, defaukt: Date.now },
     paymentMethod: {

@@ -25,7 +25,7 @@ export interface ITransactionQueryHelpers {
 
 export interface CreateTransactionRequestDTO {
   title?: string;
-  description?: string;
+  description?: string | null;
   amount?: number;
   categoryId?: string;
   type?: TransactionType;
@@ -36,7 +36,7 @@ export interface CreateTransactionRequestDTO {
 
 export interface CreateTransactionDTO {
   title: string;
-  description?: string | undefined;
+  description?: string | null;
   amount: number;
   categoryId: string;
   type: TransactionType;
@@ -46,7 +46,4 @@ export interface CreateTransactionDTO {
 }
 
 
-export enum TransactionType {
-  income = "Income",
-  expense = "Expense"
-}
+export type TransactionType = "income" | "expense";

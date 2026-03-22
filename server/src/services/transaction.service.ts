@@ -15,9 +15,11 @@ class TransactionService {
   // Add Transaction
   public async addTransaction(userId: string, data: CreateTransactionDTO) {
 
+    const walletObjectId = new Types.ObjectId(data.walletId);
+
     // Get the Wallet
     const wallet = await Wallet.findOne({
-      _id: new Types.ObjectId(data.walletId),
+      _id: walletObjectId,
       userId: new Types.ObjectId(userId),
     });
 
@@ -33,7 +35,7 @@ class TransactionService {
       userId: new Types.ObjectId(userId),
       ...data,
       categoryId: new Types.ObjectId(data.categoryId),
-      walletId: new Types.ObjectId(data.walletId),
+      walletId: walletObjectId,
     });
 
     try {
