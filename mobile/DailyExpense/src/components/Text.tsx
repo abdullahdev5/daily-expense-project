@@ -1,13 +1,15 @@
 import { View, Text, ColorValue, TextProps, TextStyle } from 'react-native';
-import React, { Children } from 'react';
-import { FontWeight } from '../types/styles';
+import React, { Children, ReactNode } from 'react';
+import { FontWeight, TextDecoration } from '../types/styles';
 import { useTheme } from '../theme/ThemeProvider';
 
 type AppTextProps = TextProps & {
-  children: string;
+  children: ReactNode;
   color?: ColorValue;
   fontSize?: number;
   fontWeight?: FontWeight;
+  textDecoration?: TextDecoration;
+  textDecorationColor?: ColorValue;
   style?: TextStyle | TextStyle[];
 };
 
@@ -16,6 +18,8 @@ const AppText = ({
   color,
   fontSize,
   fontWeight,
+  textDecoration,
+  textDecorationColor,
   style,
 }: AppTextProps) => {
   const { theme } = useTheme();
@@ -31,6 +35,8 @@ const AppText = ({
           color: finalColor,
           fontSize: finalFontSize,
           fontWeight: finalFontWeight,
+          textDecorationLine: textDecoration,
+          textDecorationColor: textDecorationColor
         },
         style,
       ]}

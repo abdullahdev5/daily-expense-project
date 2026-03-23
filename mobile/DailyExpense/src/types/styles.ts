@@ -8,6 +8,7 @@ export type FlexDirection = FlexStyle['flexDirection'];
 
 // Text Styles
 export type FontWeight = TextStyle['fontWeight'];
+export type TextDecoration = TextStyle['textDecorationLine'];
 
 
 // TextInput Style
