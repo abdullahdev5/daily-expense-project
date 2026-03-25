@@ -25,6 +25,7 @@ type AppButtonProps = {
   foregroundColor?: ColorValue;
   borderRadius?: number;
   gradientColors?: string[];
+  disabled?: boolean;
 };
 
 const AppButton = ({
@@ -37,15 +38,17 @@ const AppButton = ({
   foregroundColor = 'white',
   borderRadius,
   gradientColors,
+  disabled = false,
 }: AppButtonProps) => {
   const { theme } = useTheme();
 
   const finalGradientColors = gradientColors ?? theme.colors.primaryGradient;
   const finalBorderRadius = borderRadius ?? theme.radius.md;
+  const disabledColor = theme.colors.disabled;
 
   const content =
     typeof children == 'string' ? (
-      <AppText style={{ color: foregroundColor ?? 'white' }}>
+      <AppText style={{ color: disabled ? colors.black : (foregroundColor ?? 'white') }}>
         {children}
       </AppText>
     ) : (
@@ -65,6 +68,7 @@ const AppButton = ({
   return (
     <TouchableOpacity
       onPress={onPress}
+      disabled={disabled}
       activeOpacity={0.5}
       style={{
         width: fullWidth ? '100%' : width,
@@ -73,7 +77,9 @@ const AppButton = ({
     >
       {!backgroundColor ? (
         <LinearGradient
-          colors={finalGradientColors}
+          colors={
+            disabled ? [disabledColor, disabledColor] : finalGradientColors
+          }
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={[buttonStyle]}
@@ -81,12 +87,18 @@ const AppButton = ({
           {content}
         </LinearGradient>
       ) : (
-        <View style={[buttonStyle, { backgroundColor }]}>{content}</View>
+        <View
+          style={[
+            buttonStyle,
+            { backgroundColor: disabled ? disabledColor : backgroundColor },
+          ]}
+        >
+          {content}
+        </View>
       )}
     </TouchableOpacity>
   );
 };
-
 
 // IconButton
 type AppIconButtonProps = React.ComponentProps<typeof AppIcon> & {
@@ -99,19 +111,22 @@ const AppIconButton = ({
   onPress,
   buttonStyle,
   provider = 'Material', // Default to Material
-  rippleColor,// = 'rgba(255, 255, 255, 0.3)',
+  rippleColor, // = 'rgba(255, 255, 255, 0.3)',
   ...iconProps // Spreads name, size, color, iconSource, etc.
 }: AppIconButtonProps) => {
   const { theme } = useTheme();
   return (
     <Pressable
       onPress={onPress}
+      disabled={iconProps.disabled}
       style={({ pressed }) => [
         {
           borderRadius: '50%',
           padding: 10,
           alignSelf: 'flex-start',
-          backgroundColor: pressed ? (rippleColor ?? theme.colors.rippleColor) : 'transparent',
+          backgroundColor: pressed
+            ? rippleColor ?? theme.colors.rippleColor
+            : 'transparent',
         },
         buttonStyle,
       ]}
