@@ -11,6 +11,7 @@ const registerUser = async (
 ) => {
   try {
     const reqBody: RegisterUserRequestDTO = req.body;
+    const pictureFile = req.file;
 
     if (!reqBody.name || !reqBody.email || !reqBody.password) {
       throw new HttpError("all fields are required!", 400);
@@ -22,7 +23,8 @@ const registerUser = async (
       password: reqBody.password,
     }
 
-    const data = await authService.registerUser(bodyData);
+    const data = await authService.registerUser(bodyData, pictureFile);
+    
     // sending response
     return responseHelper.sendAuthSuccess(
       res,

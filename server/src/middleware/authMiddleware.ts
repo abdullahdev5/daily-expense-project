@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { User } from "../models/User";
 import { responseHelper } from "../helpers/responseHelper";
 import { UserPayload } from "../types/user";
@@ -43,7 +43,16 @@ export const protect = async (
 
     next();
   } catch (e: any) {
-    throw new Error(e.message);
+    
+    if (e instanceof TokenExpiredError) {
+      return responseHelper.sendError(res, "Token expired, please login again!", 401);
+    }
+
+    if (e instanceof JsonWebTokenError) {
+      return responseHelper.sendError(res, "Invalid token!", 401);
+    }
+
+    return responseHelper.sendError(res, "Internal Error!", 500);
   }
 };
 

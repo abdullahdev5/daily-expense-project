@@ -9,21 +9,18 @@ const connect = async () => {
   const uri = process.env.MONGO_URI;
 
   if (!uri) {
-    throw new HttpError("DATABASE_URI is missing in the environment variables!");
-  }
-
-  try {
-    db = await mongoose.connect(uri, { dbName: DATABASE_NAME });
-
-    console.log(
-      "Database Connected Successfully",
-      db.connection.host,
-      db.connection.name,
+    throw new HttpError(
+      "DATABASE_URI is missing in the environment variables!",
     );
-  } catch (e: any) {
-    console.error(e);
-    exit(e.message);
   }
+
+  db = await mongoose.connect(uri, { dbName: DATABASE_NAME });
+
+  console.log(
+    "Database Connected Successfully",
+    db.connection.host,
+    db.connection.name,
+  );
 };
 
 const disconnect = async () => {

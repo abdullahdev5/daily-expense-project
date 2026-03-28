@@ -6,7 +6,7 @@ const init = (io: Server) => {
   io.use((socket: Socket, next) => {
     const token = socket.handshake.auth?.token;
     if (!token) {
-      next(new Error("UnAuthorized, token missing!"));
+      return next(new Error("UnAuthorized, token missing!"));
     }
     const user = verifyToken(token);
 
@@ -20,8 +20,13 @@ const init = (io: Server) => {
       `User Connected: ${socket.user?.email} (ID: ${socket.user?._id})`,
     );
 
+    if (!socket.user) {
+      console.log('User missing on Socket!');
+      return;
+    }
+
     // Joining User
-    socket.join(socket.user!._id.toString());
+    socket.join(socket.user._id.toString());
 
     // User disconnect
     socket.on("disconnect", () => {

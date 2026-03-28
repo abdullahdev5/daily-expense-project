@@ -1,13 +1,14 @@
 import express from 'express';
 import { protect } from '../middleware/authMiddleware';
 import { login, registerUser, getUser, googleAuth, facebookAuth } from '../controllers/auth.controller';
+import { upload } from '../config/multer';
 
 const router = express.Router();
 
 
 // Register User
 // POST (/register)
-router.post('/register', registerUser);
+router.post('/register', upload.single('picture'), registerUser);
 
 // Login
 // POST (/login)

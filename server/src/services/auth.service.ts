@@ -4,34 +4,49 @@ import { HttpError } from "../utils/errors.util";
 import { OAuth2Client, TokenPayload } from "google-auth-library";
 import { generateJwtToken } from "../utils/jwt.util";
 import axios from "axios";
+import { BUCKET_NAMES } from "../constants/supabaseConstants";
+import { supabaseAdmin } from "../config/supabase";
 
 // AuthService
 class AuthService {
-  private googleClient: OAuth2Client;
+  private googleClient?: OAuth2Client;
 
-  constructor() {
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-    if (!clientId) {
-      throw new HttpError(
-        "GOOGLE_CLIENT_ID is missing from the environment variables!",
-        500,
-      );
+  init() {
+    if (!this.googleClient) {
+      const clientId = process.env.GOOGLE_CLIENT_ID;
+      if (!clientId) {
+        throw new HttpError(
+          "GOOGLE_CLIENT_ID is missing from the environment variables!",
+          500,
+        );
+      }
+      this.googleClient = new OAuth2Client(clientId);
     }
-    this.googleClient = new OAuth2Client(clientId);
   }
 
   /* Public Functions */
 
-  public async registerUser(data: RegisterUserDTO) {
+  public async registerUser(
+    data: RegisterUserDTO,
+    pictureFile: Express.Multer.File | undefined,
+  ) {
     const existingUser = await User.findOne({ email: data.email as string });
 
     if (existingUser) {
       throw new HttpError("This email is already Exists!", 401);
     }
 
+    let picturePublicUrl: string | null = null;
+
+    if (pictureFile) {
+      const fileName = `${data.name}-${pictureFile.originalname}-${Date.now()}`;
+      picturePublicUrl = await this.uploadUserPicture(pictureFile, fileName);
+    }
+
     const user = await User.create({
       ...data,
-      provider: 'email'
+      picture: picturePublicUrl,
+      provider: "email",
     });
 
     return {
@@ -43,7 +58,11 @@ class AuthService {
   public async login(email: string, password: string) {
     const user = await User.findOne({ email }).select("+password");
 
-    if (!user || !(await user.comparePassword(password))) {
+    if (!user) {
+      throw new HttpError("Inavlid Email!", 401);
+    }
+
+    if (!(await user.comparePassword(password))) {
       throw new HttpError("Invalid Credentials!", 401);
     }
 
@@ -67,7 +86,7 @@ class AuthService {
         name: googleUser.name || "Google User",
         email: googleUser.email,
         picture: googleUser.picture || null,
-        provider: 'google',
+        provider: "google",
         providerId: googleUser.sub,
       });
     }
@@ -88,14 +107,14 @@ class AuthService {
         name: fbUser.name,
         email: fbUser.email,
         picture: fbUser.picture,
-        provider: 'facebook',
-        providerId: fbUser.id
+        provider: "facebook",
+        providerId: fbUser.id,
       });
     }
 
     return {
       user,
-      token: generateJwtToken({ _id: user._id, email: user.email })
+      token: generateJwtToken({ _id: user._id, email: user.email }),
     };
   }
 
@@ -114,7 +133,7 @@ class AuthService {
       );
     }
 
-    const ticket = await this.googleClient.verifyIdToken({
+    const ticket = await this.googleClient!.verifyIdToken({
       idToken,
       audience: clientId,
     });
@@ -123,18 +142,59 @@ class AuthService {
   }
 
   private async verifyFacebookToken(accessToken: string) {
-    const response = await axios.get("https://graph.facebook.com/me", {
+    // 1. Get an App Access Token (AppID|AppSecret)
+    const appAccessToken = `${process.env.FB_APP_ID}|${process.env.FB_APP_SECRET}`;
+
+    // Verify the token with the debug_token endpoint
+    const debugResponse = await axios.get("https://graph.facebook.com/debug_token", {
+      params: {
+        input_token: accessToken,
+        access_token: appAccessToken,
+      },
+    });
+
+    const { data } = debugResponse.data;
+
+    // Check if the token belongs to YOUR App ID
+    if (!data.is_valid || data.app_id !== process.env.FB_APP_ID) {
+      throw new HttpError("Invalid or unauthorized Facebook Token", 401);
+    }
+
+    // 4. Now safely fetch user details
+    const userResponse = await axios.get("https://graph.facebook.com/me", {
       params: {
         fields: "id,name,email,picture",
         access_token: accessToken,
       },
     });
 
-    if (!response.data || response.data.error) {
-      throw new HttpError("Invalid Facebook Token");
-    }
+    return userResponse.data;
+  }
 
-    return response.data;
+  private async uploadUserPicture(
+    file: Express.Multer.File,
+    fileName: string,
+  ): Promise<string> {
+    // will return publicUrl
+
+    const { data, error } = await supabaseAdmin.storage
+      .from(BUCKET_NAMES.PROFILE_IMAGES)
+      .upload(fileName, file.buffer, {
+        contentType: file.mimetype,
+        upsert: false,
+      });
+
+    console.log("Upload Data: " + data);
+
+    if (error) throw error;
+
+    const {
+      data: { publicUrl },
+    } = supabaseAdmin.storage
+      .from(BUCKET_NAMES.WALLET_ICONS)
+      .getPublicUrl(fileName);
+
+    return publicUrl;
   }
 }
 

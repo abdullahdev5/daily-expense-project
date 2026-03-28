@@ -1,17 +1,15 @@
-import dotenv from 'dotenv';
-import express from "express";
-import { connect as connectDB, disconnect as disconnectDB } from './config/db';
-import authRoutes from './routes/authRoutes';
-import { Server, Socket } from 'socket.io';
-import http from 'http';
-import { verifyToken } from './middleware/authMiddleware';
-import errorHandler from './middleware/errorHandler';
-import { socketService } from './services/socket.service';
-import { init as initSocket } from './config/socket';
-
-
+import dotenv from "dotenv";
 dotenv.config();
-connectDB();
+
+import express from "express";
+import { connect as connectDB, disconnect as disconnectDB } from "./config/db";
+import authRoutes from "./routes/authRoutes";
+import { Server } from "socket.io";
+import http from "http";
+import errorHandler from "./middleware/errorHandler";
+import { socketService } from "./services/socket.service";
+import { init as initSocket } from "./config/socket";
+import { authService } from "./services/auth.service";
 
 const app = express();
 const server = http.createServer(app);
@@ -23,31 +21,43 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 
+authService.init();
 // auth route
-app.use('/api/auth', authRoutes);
-
+app.use("/api/auth", authRoutes);
 
 // Express js Error Handling middleware
 app.use(errorHandler);
-
 
 // Initializing Socket
 initSocket(io);
 // Initializing Socket Service
 socketService.init(io);
 
+const startServer = async () => {
+  try {
+    await connectDB();
 
-// Express Connection
-app.listen(PORT, () => {
-    console.log(`Server is running on ${PORT} PORT`);
-});
+    // Server Connection
+    server.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start the server", error);
+    process.exit(1);
+  }
+};
 
-process.on('SIGINT', async () => {
-    await disconnectDB();
+
+startServer();
+
+
+const shutdown = async () => {
+  console.log("Shutting down...");
+  await disconnectDB();
+  server.close(() => {
     process.exit(0);
-});
+  });
+};
 
-process.on('SIGTERM', async () => {
-    await disconnectDB();
-    process.exit(0);
-});
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
