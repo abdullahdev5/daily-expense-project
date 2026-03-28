@@ -10,7 +10,9 @@ export const colors = {
   lightGrey: '#D3D3D3',
   lightDark: '#23203F',
   dark: '#141326',
-  transparentYellow: 'rgba(227, 181, 60, 0.3)'
+  transparentYellow: 'rgba(227, 181, 60, 0.3)',
+  transparent: 'transparent',
+  gradientColor: '#E84040'
 };
 
 export const darkColors = {
@@ -31,7 +33,6 @@ export const darkColors = {
   rippleColor: colors.transparentYellow,
   primaryGradient: [colors.yellow, colors.red],
   secondaryGradient: [colors.orange, colors.red],
-  bgGradient: [colors.orange, 'transparent'],
 };
 
 export const lightColors = {
@@ -52,5 +53,4 @@ export const lightColors = {
   rippleColor: colors.transparentYellow,
   primaryGradient: [colors.yellow, colors.red],
   secondaryGradient: [colors.orange, colors.red],
-  bgGradient: [colors.orange, 'transparent'],
 };

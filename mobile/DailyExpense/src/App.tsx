@@ -6,35 +6,38 @@
  */
 
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
 } from 'react-native';
 import {
   SafeAreaProvider,
-  useSafeAreaInsets,
+  // useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import { ThemeProvider, useTheme } from './theme/ThemeProvider';
-import LinearGradient from 'react-native-linear-gradient';
-import { Column } from './components/Layout';
-import AppText from './components/Text';
-import AppTextInput from './components/TextInput';
-import AppButton from './components/Button';
-import { Formik } from 'formik';
-import AppFormInput from './components/FormInput';
-import AppCard from './components/Card';
+import GlobalSnackbar from './components/GlobalSnackbar';
+import AppNavigator from './navigation/AppNavigator';
+import { useEffect } from 'react';
+import { userStore } from './store/userStore';
+import { getToken } from './storage/auth.storage';
+import KeepAwake from 'react-native-keep-awake';
 
 function App() {
+  useEffect(() => {
+    const token = getToken();
+
+    if (token) {
+      userStore.getState().getUser();
+    } else {
+      userStore.getState().setUser(undefined);
+    }
+  }, []);
+
   return (
     <ThemeProvider>
       <SafeAreaProvider>
+        <GlobalSnackbar />
         <AppStatusBar />
-        <AppContent />
+        <AppNavigator />
+        <KeepAwake />
       </SafeAreaProvider>
     </ThemeProvider>
   );
@@ -52,87 +55,38 @@ function AppStatusBar() {
   );
 }
 
-function AppContent() {
-  const { theme, toggleTheme } = useTheme();
-  const insets = useSafeAreaInsets();
+// const RootStack = createNativeStackNavigator();
+// const AuthStack = createNativeStackNavigator();
+// const AppStack = createNativeStackNavigator();
 
-  return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: theme.colors.background,
-        paddingTop: insets.top,
-      }}
-    >
-      <AppCard>
-        <Column center>
-          <AppText>Hello Card!</AppText>
-        </Column>
-      </AppCard>
+// function AppContent() {
+//   return (
+//     <NavigationContainer>
+//       <RootStack.Navigator initialRouteName='auth'>
+//         <RootStack.Screen name='auth' component={AuthStackScreens} options={{ headerShown: false }} />
+//         <RootStack.Screen name='app' component={AppStackScreens} />
+//       </RootStack.Navigator>      
+//     </NavigationContainer>
+//   );
 
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
-      >
-        <Formik
-          initialValues={{ email: '', password: '' }}
-          validateOnChange={true}
-          onSubmit={values => {
-            console.log(values);
-          }}
-        >
-          {({ handleSubmit, submitCount }) => (
-            <Column expand center>
-              <AppText
-                style={{
-                  color: theme.colors.primary,
-                  fontSize: theme.fontSize.xxLarge,
-                }}
-              >
-                Sign Up
-              </AppText>
+// }
 
-              <AppFormInput
-                containerStyle={{ padding: 10 }}
-                placeholder="Email"
-                keyboardType="email-address"
-                name="email"
-                submitCount={submitCount}
-                validator={text => {
-                  if (!text.endsWith('@gmail.com')) {
-                    return 'Invalid Email!';
-                  }
 
-                  return undefined;
-                }}
-              />
+// function AuthStackScreens() {
+//   return (
+//     <AuthStack.Navigator initialRouteName='register'>
+//       <AuthStack.Screen name='register' component={RegisterScreen} options={{ headerShown: false }} />
+//       <AuthStack.Screen name='login' component={LoginScreen} />
+//     </AuthStack.Navigator>
+//   );
+// }
 
-              <AppFormInput
-                containerStyle={{ padding: 10 }}
-                placeholder="Password"
-                keyboardType="default"
-                name="password"
-                submitCount={submitCount}
-                validator={text => {
-                  if (text.length < 6) {
-                    return 'password must be atleast 6 characters long!';
-                  }
-
-                  return undefined;
-                }}
-              />
-
-              <View style={{ width: '100%', padding: 10 }}>
-                <AppButton onPress={handleSubmit} fullWidth>
-                  Submit
-                </AppButton>
-              </View>
-            </Column>
-          )}
-        </Formik>
-      </ScrollView>
-    </View>
-  );
-}
+// function AppStackScreens() {
+//   return (
+//     <AppStack.Navigator>
+//       <AppStack.Screen name='home' component={HomeScreen} />
+//     </AppStack.Navigator>
+//   );
+// }
 
 export default App;

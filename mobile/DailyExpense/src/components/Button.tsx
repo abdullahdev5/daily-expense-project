@@ -26,6 +26,7 @@ type AppButtonProps = {
   borderRadius?: number;
   gradientColors?: string[];
   disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 
 const AppButton = ({
@@ -39,6 +40,7 @@ const AppButton = ({
   borderRadius,
   gradientColors,
   disabled = false,
+  style,
 }: AppButtonProps) => {
   const { theme } = useTheme();
 
@@ -48,7 +50,9 @@ const AppButton = ({
 
   const content =
     typeof children == 'string' ? (
-      <AppText style={{ color: disabled ? colors.black : (foregroundColor ?? 'white') }}>
+      <AppText
+        style={{ color: disabled ? colors.black : foregroundColor ?? 'white' }}
+      >
         {children}
       </AppText>
     ) : (
@@ -70,10 +74,13 @@ const AppButton = ({
       onPress={onPress}
       disabled={disabled}
       activeOpacity={0.5}
-      style={{
-        width: fullWidth ? '100%' : width,
-        height: height,
-      }}
+      style={[
+        {
+          width: fullWidth ? '100%' : width,
+          height: height,
+        },
+        style,
+      ]}
     >
       {!backgroundColor ? (
         <LinearGradient
