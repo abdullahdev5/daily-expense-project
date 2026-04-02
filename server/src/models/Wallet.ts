@@ -15,7 +15,17 @@ const walletSchema = new mongoose.Schema<
       required: true,
     },
     name: { type: String, required: true, trim: true },
-    icon: { type: String, default: null },
+    type: {
+      type: String,
+      enum: ['cash', 'bank', 'card', 'digital'],
+      default: 'cash',
+      trim: true
+    },
+    provider: {
+      type: String,
+      default: null,
+      trim: true
+    },
     balance: { type: Number, default: 0 },
 
     currency: { type: String, default: "USD" },

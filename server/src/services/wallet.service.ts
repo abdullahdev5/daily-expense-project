@@ -8,64 +8,15 @@ import { ITransaction } from "../types/transaction";
 import { Transaction } from "../models/Transaction";
 
 class WalletService {
-  private async uploadWalletIcon(
-    file: Express.Multer.File,
-    fileName: string,
-  ): Promise<string> {
-    // will return publicUrl
-
-    const { data, error } = await supabaseAdmin.storage
-      .from(BUCKET_NAMES.WALLET_ICONS)
-      .upload(fileName, file.buffer, {
-        contentType: file.mimetype,
-        upsert: false,
-      });
-
-    console.log("Upload Data: " + data);
-
-    if (error) throw error;
-
-    const {
-      data: { publicUrl },
-    } = supabaseAdmin.storage
-      .from(BUCKET_NAMES.WALLET_ICONS)
-      .getPublicUrl(fileName);
-
-    return publicUrl;
-  }
-
-  private async deleteWalletIcon(iconePublicUrl: string) {
-    const filePath = iconePublicUrl.getFilePathFromUrl(BUCKET_NAMES.WALLET_ICONS);
-    const { data, error } = await supabaseAdmin.storage
-        .from(BUCKET_NAMES.WALLET_ICONS)
-        .remove([filePath]);
-    
-    if (error) {
-        throw new HttpError("failed to delete the wallet Icon!", 500);
-    }
-    
-    return;
-  }
 
   public async addWallet(
     userId: string,
-    iconFile: Express.Multer.File | undefined,
     data: CreateWalletDTO,
   ) {
-    let iconPublicUrl: string | null = null;
-
-    if (iconFile) {
-      // Uploading Category Icon
-      const iconFileName = `${data.name}-${iconFile.originalname}-${Date.now()}`;
-      iconPublicUrl = await this.uploadWalletIcon(iconFile, iconFileName);
-      console.log(`wallet icon public Url: ${iconPublicUrl}`);
-    }
-
     // Adding Category
     const wallet = await Wallet.create({
       userId,
-      ...data,
-      icon: iconPublicUrl,
+      ...data
     });
 
     return wallet;
@@ -91,10 +42,7 @@ class WalletService {
     if (!wallet) {
       throw new HttpError("unable to find the wallet to delete!");
     }
-    if (wallet.icon) {
-        // Deleting Wallet Icon
-        await this.deleteWalletIcon(wallet.icon);
-    }
+
     // Deleting Wallet
     await wallet.deleteOne();
 
@@ -112,6 +60,10 @@ class WalletService {
 
   public async getAllWallets(userId: string) {
     return Wallet.find({ userId }).sort({ createdAt: -1 });
+  }
+
+  public async getWalletByID(userId: string, walletId: string) {
+    return Wallet.findOne({ userId, walletId });
   }
 }
 

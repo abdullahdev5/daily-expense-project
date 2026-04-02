@@ -4,6 +4,7 @@ dotenv.config();
 import express from "express";
 import { connect as connectDB, disconnect as disconnectDB } from "./config/db";
 import authRoutes from "./routes/authRoutes";
+import walletRoutes from "./routes/wallet.routes";
 import { Server } from "socket.io";
 import http from "http";
 import errorHandler from "./middleware/errorHandler";
@@ -22,8 +23,12 @@ app.use(express.json());
 
 
 authService.init();
-// auth route
+// auth routes
 app.use("/api/auth", authRoutes);
+
+// wallet routes
+app.use('/api', walletRoutes);
+
 
 // Express js Error Handling middleware
 app.use(errorHandler);

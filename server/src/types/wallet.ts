@@ -1,10 +1,10 @@
 import { Document, Types } from "mongoose";
-import { TransactionType } from "./transaction";
 
 export interface IWallet extends Document {
     userId: Types.ObjectId;
     name: string;
-    icon?: string | null;
+    type: WalletType;
+    provider?: string | null;
     balance: number;
     currency: string;
     createdAt: Date;
@@ -17,13 +17,19 @@ export interface IWalletMethods {
 
 }
 
+export type WalletType = 'cash' | 'bank' | 'card' | 'digital';
+
 
 export interface CreateWalletRequestDTO {
     name?: string;
     currency?: string;
+    type?: string;
+    provider?: string;
 }
 
 export interface CreateWalletDTO {
     name: string;
     currency: string;
+    type: WalletType;
+    provider?: string | null;
 }

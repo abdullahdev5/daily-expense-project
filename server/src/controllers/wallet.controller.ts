@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { responseHelper } from "../helpers/responseHelper";
-import { CreateWalletDTO, CreateWalletRequestDTO, IWallet } from "../types/wallet";
+import { CreateWalletDTO, CreateWalletRequestDTO, IWallet, WalletType } from "../types/wallet";
 import { walletService } from "../services/wallet.service";
 import { HttpError } from "../utils/errors.util";
 
@@ -12,28 +12,28 @@ const createWallet = async (
 ) => {
   try {
     const userId = req.user!._id;
-    const iconFile = req.file;
     const reqBody: CreateWalletRequestDTO = req.body;
 
-    if (!reqBody.name || !reqBody.currency) {
+    if (!reqBody.name || !reqBody.currency || !reqBody.type) {
       throw new HttpError("all fields are required!", 400);
     }
 
     const bodyData: CreateWalletDTO = {
       name: reqBody.name,
-      currency: reqBody.currency
+      currency: reqBody.currency.trim().toUpperCase(),
+      type: reqBody.type.trim().toLowerCase() as WalletType,
+      provider: reqBody.provider?.trim().toLowerCase() ?? null,
     };
 
     // Creating Wallet
     const wallet = await walletService.addWallet(
       userId.toString(),
-      iconFile,
       bodyData,
     );
     // sending response
     return responseHelper.sendSuccess(
       res,
-      { wallet },
+      wallet,
       "wallet created successfully",
       201,
     );
@@ -85,6 +85,37 @@ const getAllWallets = async (
     } catch (e: any) {
         next(e);
     }
+}
+
+
+// get Wallet
+export const getWallet = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user!._id;
+    const walletId = req.params.id;
+
+    if (!walletId) {
+      return responseHelper.sendError(
+        res,
+        'Wallet ID is not provided!',
+        400
+      );
+    }
+
+    const wallet = await walletService.getWalletByID(userId.toString(), walletId as string);
+
+    return responseHelper.sendSuccess(
+      res,
+      wallet,
+      'Success',
+    );
+  } catch (e: any) {
+    next(e);
+  }
 }
 
 
