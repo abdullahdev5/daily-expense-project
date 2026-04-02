@@ -1,14 +1,21 @@
 
 export const ROUTES = {
-    AUTH: 'auth',
-    APP: 'app'
+    auth: 'auth',
+    app: 'app'
 } as const;
 
 export const AUTH_ROUTES = {
-    LOGIN: 'login',
-    REGISTER: 'register'
+    login: 'login',
+    register: 'register'
 } as const;
 
 export const APP_ROUTES = {
-    HOME: 'home'
+    mainTabs: 'mainTabs',
+} as const;
+
+export const Main_TABS_ROUTES = {
+    home: 'home',
+    wallet: 'wallet',
+    insight: 'insight',
+    profile: 'profile'
 } as const;

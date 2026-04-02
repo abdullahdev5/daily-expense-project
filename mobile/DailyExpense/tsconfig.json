@@ -3,6 +3,10 @@
   "compilerOptions": {
     "types": ["jest"],
     "typeRoots": ["./src/types", "./node_modules/@types"],
+    "paths": {
+      "@components/*": ["./src/components/*"],
+      "@assets/*": ["./assets/*"]
+    }
   },
   // "include": ["**/*.ts", "**/*.tsx"],
   "include": ["src"],

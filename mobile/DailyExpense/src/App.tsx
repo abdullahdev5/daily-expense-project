@@ -21,15 +21,15 @@ import { getToken } from './storage/auth.storage';
 import KeepAwake from 'react-native-keep-awake';
 
 function App() {
-  useEffect(() => {
-    const token = getToken();
+  // useEffect(() => {
+  //   const token = getToken();
 
-    if (token) {
-      userStore.getState().getUser();
-    } else {
-      userStore.getState().setUser(undefined);
-    }
-  }, []);
+  //   if (token) {
+  //     userStore.getState().getUser();
+  //   } else {
+  //     userStore.getState().setUser(undefined);
+  //   }
+  // }, []);
 
   return (
     <ThemeProvider>

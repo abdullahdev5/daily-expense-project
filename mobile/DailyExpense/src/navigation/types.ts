@@ -1,29 +1,30 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { APP_ROUTES, AUTH_ROUTES, ROUTES } from "./routes"
+import { APP_ROUTES, AUTH_ROUTES, Main_TABS_ROUTES, ROUTES } from "./routes"
 import { NavigatorScreenParams } from "@react-navigation/native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 
 export type RootStackParamList = {
-    // [ROUTES.AUTH]: {
-    //     screen?: keyof AuthStackParamList,
-    //     params?: AuthStackParamList[keyof AuthStackParamList]
-    // };
-    // [ROUTES.APP]: {
-    //     screen?: keyof AppStackParamList,
-    //     params?: AppStackParamList[keyof AppStackParamList]
-    // };
-    [ROUTES.AUTH]: NavigatorScreenParams<AuthStackParamList>;
-    [ROUTES.APP]: NavigatorScreenParams<AppStackParamList>;
+    [ROUTES.auth]: NavigatorScreenParams<AuthStackParamList>;
+    [ROUTES.app]: NavigatorScreenParams<AppStackParamList>;
 }
 
 export type AuthStackParamList = {
-    [AUTH_ROUTES.LOGIN]: undefined;
-    [AUTH_ROUTES.REGISTER]: undefined;
+    [AUTH_ROUTES.login]: undefined;
+    [AUTH_ROUTES.register]: undefined;
 }
 
 export type AppStackParamList = {
-    [   APP_ROUTES.HOME]: undefined;
+    [APP_ROUTES.mainTabs]: NavigatorScreenParams<MainTabsStackParamList>;
+}
+
+export type MainTabsStackParamList = {
+    [Main_TABS_ROUTES.home]: undefined;
+    [Main_TABS_ROUTES.wallet]: undefined;
+    [Main_TABS_ROUTES.insight]: undefined;
+    [Main_TABS_ROUTES.profile]: undefined;
 }
 
 
 export type AuthNavigation = NativeStackNavigationProp<AuthStackParamList>;
 export type AppNavigation = NativeStackNavigationProp<AppStackParamList>;
+export type MainTabsNavigation = BottomTabNavigationProp<MainTabsStackParamList>;

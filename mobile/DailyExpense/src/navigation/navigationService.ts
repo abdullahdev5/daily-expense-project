@@ -1,6 +1,6 @@
 import { navigationRef } from './navigationRef';
-import { APP_ROUTES, AUTH_ROUTES, ROUTES } from './routes';
-import { AppStackParamList, AuthStackParamList, RootStackParamList } from './types';
+import { APP_ROUTES, AUTH_ROUTES, Main_TABS_ROUTES, ROUTES } from './routes';
+import { AppStackParamList, AuthStackParamList, MainTabsStackParamList, RootStackParamList } from './types';
 
 export const navigateAuth = <T extends keyof AuthStackParamList>(
     screen: T,
@@ -9,7 +9,7 @@ export const navigateAuth = <T extends keyof AuthStackParamList>(
     if (!navigationRef.isReady()) return;
 
     navigationRef.navigate({
-        name: ROUTES.AUTH,
+        name: ROUTES.auth,
         params: { screen, params }
     });
 }
@@ -20,10 +20,22 @@ export const navigateApp = <T extends keyof AppStackParamList>(
 ) => {
     if (!navigationRef.isReady()) return;
 
-    navigationRef.navigate({
-        name: ROUTES.APP,
-        params: { screen, params }
-    });
+    navigationRef.navigate(ROUTES.app, {
+      screen,
+      params
+    } as any);
+}
+
+export const navigateMainTabs = <T extends keyof MainTabsStackParamList>(
+  screen: T,
+  params?: MainTabsStackParamList[T]
+) => {
+  if (!navigationRef.isReady()) return;
+
+  navigationRef.navigate(ROUTES.app, {
+    screen: APP_ROUTES.mainTabs,
+    params: { screen, params }
+  })
 }
 
 export function goBack() {
@@ -37,9 +49,9 @@ export function resetToLogin() {
     navigationRef.reset({
       index: 0,
       routes: [{ 
-        name: ROUTES.AUTH,
+        name: ROUTES.auth,
         params: {
-          screen: AUTH_ROUTES.LOGIN
+          screen: AUTH_ROUTES.login
         }
       }],
     });
@@ -51,9 +63,9 @@ export function resetToMain() {
     navigationRef.reset({
       index: 0,
       routes: [{
-        name: ROUTES.APP,
+        name: ROUTES.app,
         params: {
-          screen: APP_ROUTES.HOME
+          screen: APP_ROUTES.mainTabs
         }
       }]
     })

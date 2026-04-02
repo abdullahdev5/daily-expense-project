@@ -36,10 +36,7 @@ const AppIcon = ({
   const finalSize = size ?? theme.fontSize.large;
   const finalColor = color ?? theme.colors.text;
 
-  // Standard style to prevent full-width stretching
-  const combinedStyle = [{ alignSelf: 'flex-start' as const }, style as any];
-
-  // 1. Image Provider Logic
+  // Image Provider Logic
   if (provider === 'Image' || iconSource) {
     return (
       <Image
@@ -49,7 +46,6 @@ const AppIcon = ({
             width: finalSize, 
             height: finalSize, 
             tintColor: color, 
-            alignSelf: 'flex-start' 
           },
           style,
         ] as ImageStyle}
@@ -64,7 +60,7 @@ const AppIcon = ({
     name: name ?? 'help-outline',
     size: finalSize,
     color: finalColor,
-    style: combinedStyle,
+    style: style,
   };
 
   // 2. Switch between Vector Providers

@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
-import HomeScreen from '../screens/HomeScreen';
+import MainTabs from '../screens/app/tabs/MainTabs';
 import { navigationRef } from './navigationRef';
 import { APP_ROUTES, AUTH_ROUTES, ROUTES } from './routes';
 import {
@@ -20,28 +20,29 @@ const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const AppStack = createNativeStackNavigator<AppStackParamList>();
 
 function AppNavigator() {
-  const isLoading = userStore(s => s.isLoading);
-  const user = userStore((s) => s.user);
+  // const isLoading = userStore(s => s.isLoading);
+  // const user = userStore((s) => s.user);
 
-  if (isLoading) {
-    return (
-      <AppScreen style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <AppActivityLoader />
-      </AppScreen>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <AppScreen style={{ justifyContent: 'center', alignItems: 'center' }}>
+  //       <AppActivityLoader />
+  //     </AppScreen>
+  //   );
+  // }
 
   return (
     <NavigationContainer ref={navigationRef}>
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        {user ? (
-          <RootStack.Screen name={ROUTES.APP} component={AppStackScreens} options={{ headerShown: false }} />
+        {/* {user ? (
+          <RootStack.Screen name={ROUTES.app} component={AppStackScreens} options={{ headerShown: false }} />
         ) : (
           <RootStack.Screen
-            name={ROUTES.AUTH}
+            name={ROUTES.auth}
             component={AuthStackScreens}
           />
-        )}
+        )} */}
+        <RootStack.Screen name={ROUTES.app} component={AppStackScreens} />
       </RootStack.Navigator>
     </NavigationContainer>
   );
@@ -50,16 +51,16 @@ function AppNavigator() {
 function AuthStackScreens() {
   return (
     <AuthStack.Navigator
-      initialRouteName={AUTH_ROUTES.LOGIN}
+      initialRouteName={AUTH_ROUTES.login}
       screenOptions={{ headerShown: false }}
     >
       <AuthStack.Screen 
-        name={AUTH_ROUTES.LOGIN}
+        name={AUTH_ROUTES.login}
         component={LoginScreen}
       />
 
       <AuthStack.Screen
-        name={AUTH_ROUTES.REGISTER}
+        name={AUTH_ROUTES.register}
         component={RegisterScreen}
       />
     </AuthStack.Navigator>
@@ -68,8 +69,13 @@ function AuthStackScreens() {
 
 function AppStackScreens() {
   return (
-    <AppStack.Navigator screenOptions={{ headerShown: false }}>
-      <AppStack.Screen name={APP_ROUTES.HOME} component={HomeScreen} options={{ headerShown: false }} />
+    <AppStack.Navigator initialRouteName={APP_ROUTES.mainTabs} screenOptions={{ headerShown: false }}>
+      
+      <AppStack.Screen 
+        name={APP_ROUTES.mainTabs}
+        component={MainTabs}
+        options={{ headerShown: false }} />
+
     </AppStack.Navigator>
   );
 }
