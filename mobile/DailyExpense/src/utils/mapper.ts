@@ -1,4 +1,5 @@
 import { AuthData, AuthDataDTO, User, UserDTO } from "../types/auth";
+import { AllWalletProviders, Wallet, WalletDTO, WalletType } from "../types/wallet";
 
 const getDefaultUser = (): User => ({
     id: '',
@@ -27,3 +28,17 @@ export const mapAuthData = (authData: AuthDataDTO): AuthData => ({
     token: authData?.token ?? '',
     user: authData.user ? mapUser(authData.user) : getDefaultUser()
 });
+
+
+// Wallet Map
+export const mapWallet = (wallet: WalletDTO): Wallet => ({
+    id: wallet.id ?? '',
+    userId: wallet.userId ?? '',
+    name: wallet.name ?? '',
+    type: (wallet.type ?? 'cash') as WalletType,
+    provider: (wallet?.provider ?? null) as AllWalletProviders | null,
+    currency: wallet.currency ?? '',
+    balance: wallet.balance ?? 0,
+    createdAt: new Date(wallet.createdAt ?? Date.now()),
+    updatedAt: new Date(wallet.updatedAt ?? Date.now()),
+})

@@ -4,7 +4,7 @@
 export const toSafeString = (value: string | null | undefined): string => value ?? '';
 
 // isNullOrEmpty
-export const isNullOrEmpty = (value: string): boolean => {
+export const isNullOrEmpty = (value: string | null | undefined): boolean => {
     return (!value || value.trim() == '');
 }
 

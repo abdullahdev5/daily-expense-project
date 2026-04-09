@@ -1,0 +1,43 @@
+import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { AllWalletTypesAndProviders } from '../../../types/wallet';
+import { DropdownItem } from '@components/Dropdown';
+import { Column, Row } from '@components/Layout';
+import AppText from '@components/Text';
+import { getWalletIcon } from '../../../utils/wallet.utils';
+import { useTheme } from '../../../theme/ThemeProvider';
+import { colors } from '../../../theme/colors';
+
+type WalletDropdownItemProps = {
+  item: DropdownItem<AllWalletTypesAndProviders>;
+  selected: boolean | undefined;
+};
+
+const WalletDropdownItem = ({ item, selected }: WalletDropdownItemProps) => {
+  const { theme } = useTheme();
+
+  return (
+    <Column
+      crossAxisAlignment="flex-start"
+      style={{
+        padding: 10,
+        borderBottomWidth: selected ? 1 : 0,
+        borderBottomColor: theme.colors.outline,
+      }}
+    >
+      {selected && (
+        <AppText 
+            color={colors.grey}
+            fontSize={theme.fontSize.xSmall}
+            style={{ paddingBottom: 5 }}>selected:</AppText>
+      )}
+
+      <Row spacing={20}>
+        {item.icon && getWalletIcon(item.icon as AllWalletTypesAndProviders)}
+        <AppText>{item.label}</AppText>
+      </Row>
+    </Column>
+  );
+};
+
+export default WalletDropdownItem;
