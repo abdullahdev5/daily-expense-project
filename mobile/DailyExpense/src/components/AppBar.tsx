@@ -5,6 +5,7 @@ import {
   StyleProp,
   ViewStyle,
   Platform,
+  TextStyle,
 } from 'react-native';
 import React, { ReactNode } from 'react';
 import { Row } from './Layout';
@@ -29,12 +30,13 @@ type AppBarProps = {
   showBackButton?: boolean;
   titleSize?: 'small' | 'medium' | 'large';
   onBack?: () => void;
-  titleStyle?: StyleProp<ViewStyle>;
+  titleStyle?: TextStyle;
   style?: StyleProp<ViewStyle>;
 };
 
 function AppBar({
   title,
+  titleStyle,
   height = 70,
   centerTitle = true,
   backgroundColor = colors.transparent,
@@ -100,23 +102,26 @@ function AppBar({
         )}
 
         {/* Title */}
-        {title && (
+        {title ? (
           <AppText
             color={finalForegroundColor}
             fontWeight={'bold'}
             fontSize={finalTitleSize}
-            style={{
-              flex: 1,
-              lineHeight: finalTitleSize + 4,
-              alignItems: 'center',
-              ...(centerTitle && {
-                textAlign: 'center',
-              }),
-            }}
+            style={[
+              {
+                flex: 1,
+                lineHeight: finalTitleSize + 4,
+                alignItems: 'center',
+                ...(centerTitle && {
+                  textAlign: 'center',
+                }),
+              },
+              titleStyle ?? {},
+            ]}
           >
             {title}
           </AppText>
-        )}
+        ) : (<View style={{ flex: 1 }} />)}
 
         {/* Actions */}
         <View style={{ alignItems: 'center', minWidth: 20 }}>

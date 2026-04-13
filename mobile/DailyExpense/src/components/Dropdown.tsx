@@ -9,8 +9,8 @@ import { TextInputBorder } from '../types/styles';
 
 export type DropdownItem<T> = {
   label: string;
-  value: string;
-  icon?: string;
+  value: string | null;
+  icon?: string | null;
   data: T;
 };
 
@@ -22,6 +22,7 @@ type DropdownComponentProps<V> = Omit<
   sortData?: boolean;
   labelTextStyle?: TextStyle;
   border?: TextInputBorder;
+  showSelectedTextInTop?: boolean;
 
   value?: string | null;
   onChange: (item: DropdownItem<V>) => void;
@@ -53,6 +54,7 @@ function DropdownComponent<V>({
   border = 'outlined',
   labelTextStyle,
   sortData = true,
+  showSelectedTextInTop = true,
 
   ...props
 }: DropdownComponentProps<V>) {
@@ -73,8 +75,10 @@ function DropdownComponent<V>({
     item: DropdownItem<V>,
     selected: boolean | undefined,
   ) => {
+    const isReadllySelected = selected && value !== null && value !== undefined;
+
     if (renderItem) {
-      return renderItem(item, selected);
+      return renderItem(item, isReadllySelected);
     }
 
     return (
@@ -85,12 +89,12 @@ function DropdownComponent<V>({
           padding: 10,
         }}
       >
-        {selected && (
+        {(isReadllySelected && showSelectedTextInTop) && (
           <AppText color={colors.grey} fontSize={theme.fontSize.xSmall}>
             selected:
           </AppText>
         )}
-        <AppText>{item.label}</AppText>
+        <AppText color={selected ? theme.colors.primary : theme.colors.text}>{item.label}</AppText>
       </View>
     );
   };
@@ -161,7 +165,7 @@ function DropdownComponent<V>({
         activeColor={activeColor ?? colors.transparent}
         renderItem={(item, selected) => internalRenderItem(item, selected)}
         renderLeftIcon={visible => {
-          const selectedItem = data.find(item => item.value === value);
+          const selectedItem = data.find(item => item.value === value && value !== null && value !== undefined);
 
           if (selectedItem && renderLeftSelectedIcon) {
             return renderLeftSelectedIcon(selectedItem);

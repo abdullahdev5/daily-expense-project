@@ -22,8 +22,8 @@ const categorySchema = new mongoose.Schema<
       trim: true,
       enum: ["income", "expense"],
     },
-    icon: { type: String, default: null },
-    isDefault: { type: Boolean, default: false },
+    icon: { type: String, default: null, trim: true },
+    color: { type: String, required: true, trim: true },
     isDeleted: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
   },
@@ -33,8 +33,14 @@ const categorySchema = new mongoose.Schema<
       transform: function (_, ret: any) {
         ret.id = ret._id.toString();
 
+        ret.isDefault = ret.userId === null;
+
+        delete ret.isDeleted;
         delete ret._id;
         delete ret.__v;
+        delete ret.userId;
+
+        return ret;
       },
     },
     toObject: {
@@ -49,7 +55,13 @@ const categorySchema = new mongoose.Schema<
 );
 
 // Prevents Duplicate when adding
-categorySchema.index({ name: 1, userId: 1, type: 1 }, { unique: true });
+categorySchema.index(
+  { name: 1, userId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { isDeleted: false }
+  }
+);
 
 export const Category = mongoose.model<
   ICategory,

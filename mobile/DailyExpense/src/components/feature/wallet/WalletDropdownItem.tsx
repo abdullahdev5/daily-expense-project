@@ -7,6 +7,7 @@ import AppText from '@components/Text';
 import { getWalletIcon } from '../../../utils/wallet.utils';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { colors } from '../../../theme/colors';
+import WalletIconRenderer from './WalletIconRenderer';
 
 type WalletDropdownItemProps = {
   item: DropdownItem<AllWalletTypesAndProviders>;
@@ -33,7 +34,7 @@ const WalletDropdownItem = ({ item, selected }: WalletDropdownItemProps) => {
       )}
 
       <Row spacing={20}>
-        {item.icon && getWalletIcon(item.icon as AllWalletTypesAndProviders)}
+        {item.icon && (<WalletIconRenderer icon={item.icon} />)}
         <AppText>{item.label}</AppText>
       </Row>
     </Column>

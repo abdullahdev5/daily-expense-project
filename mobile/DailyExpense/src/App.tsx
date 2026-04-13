@@ -18,7 +18,8 @@ import AppNavigator from './navigation/AppNavigator';
 import { useEffect } from 'react';
 import { userStore } from './store/userStore';
 import { getToken } from './storage/auth.storage';
-import KeepAwake from 'react-native-keep-awake';
+import { KeepAwake } from '@thehale/react-native-keep-awake';
+import AddCategoryScreen from './screens/app/AddCategoryScreen';
 
 function App() {
   // useEffect(() => {
@@ -37,6 +38,7 @@ function App() {
         <GlobalSnackbar />
         <AppStatusBar />
         <AppNavigator />
+
         <KeepAwake />
       </SafeAreaProvider>
     </ThemeProvider>

@@ -1,6 +1,5 @@
 import { Types } from "mongoose";
 import { Transaction } from "../models/Transaction";
-import { TransactionType } from "../types/transaction";
 import { Wallet } from "../models/Wallet";
 import { COLLECTION_NAMES } from "../constants/dbConstants";
 
@@ -23,8 +22,8 @@ class DashboardService {
     let totalIncome = 0;
 
     totals.forEach((t) => {
-        if (t.id == TransactionType.income) totalIncome = t.total;
-        if (t.id == TransactionType.expense) totalExpense = t.total;
+        if (t.id === 'income') totalIncome = t.total;
+        if (t.id === 'expense') totalExpense = t.total;
     });
 
 
@@ -46,7 +45,7 @@ class DashboardService {
       {
         $match: {
           userId: userObjectId,
-          type: TransactionType.expense,
+          type: 'expense',
         },
       },
       {
@@ -94,7 +93,7 @@ class DashboardService {
     // Recent Transactions
     const recentTransactions = await Transaction.find({ userId: userObjectId })
         .sort({ date: -1 })
-        .populate("categoryId", "name icon");
+        .populate("categoryId", "name icon color");
 
 
     

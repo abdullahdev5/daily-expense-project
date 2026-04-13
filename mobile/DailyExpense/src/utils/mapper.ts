@@ -1,4 +1,5 @@
 import { AuthData, AuthDataDTO, User, UserDTO } from "../types/auth";
+import { Category, CategoryColor, CategoryDTO, CategoryIcon } from "../types/category";
 import { AllWalletProviders, Wallet, WalletDTO, WalletType } from "../types/wallet";
 
 const getDefaultUser = (): User => ({
@@ -41,4 +42,16 @@ export const mapWallet = (wallet: WalletDTO): Wallet => ({
     balance: wallet.balance ?? 0,
     createdAt: new Date(wallet.createdAt ?? Date.now()),
     updatedAt: new Date(wallet.updatedAt ?? Date.now()),
+});
+
+// Category Map
+export const mapCategory = (category: CategoryDTO): Category => ({
+    id: category.id ?? '',
+    name: category.name ?? '',
+    type: category.type ?? 'expense',
+    icon: (category.icon ?? 'other') as CategoryIcon,
+    color: (category.color ?? 'yellow') as CategoryColor,
+    isDefault: category.isDefault ?? true,
+    createdAt: new Date(category.createdAt ?? Date.now()),
+    updatedAt: new Date(category.updatedAt ?? Date.now())
 })

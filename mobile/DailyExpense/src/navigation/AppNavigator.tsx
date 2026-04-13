@@ -14,6 +14,7 @@ import { getToken } from '../storage/auth.storage';
 import { userStore } from '../store/userStore';
 import AppScreen from '../components/AppScreen';
 import AppActivityLoader from '../components/Loader';
+import AddCategoryScreen from '../screens/app/AddCategoryScreen';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
@@ -69,12 +70,19 @@ function AuthStackScreens() {
 
 function AppStackScreens() {
   return (
-    <AppStack.Navigator initialRouteName={APP_ROUTES.mainTabs} screenOptions={{ headerShown: false }}>
+    // <AppStack.Navigator initialRouteName={APP_ROUTES.mainTabs} screenOptions={{ headerShown: false }}>
+    <AppStack.Navigator initialRouteName='createCategory' screenOptions={{ headerShown: false }}>
       
       <AppStack.Screen 
         name={APP_ROUTES.mainTabs}
         component={MainTabs}
         options={{ headerShown: false }} />
+
+      <AppStack.Screen
+        name={'createCategory' as any}
+        component={AddCategoryScreen}
+        options={{ headerShown: false }}
+      />
 
     </AppStack.Navigator>
   );

@@ -2,67 +2,48 @@ import { QueryFilter, Types } from "mongoose";
 import { supabaseAdmin } from "../config/supabase";
 import { BUCKET_NAMES } from "../constants/supabaseConstants";
 import { Category } from "../models/Category";
-import { CreateCategoryDTO, ICategory } from "../types/category";
+import { CreateCategoryRequestPayload, ICategory, UpdateCategoryPayload } from "../types/category";
+import { HttpError } from "../utils/errors.util";
 
 class CategoryService {
-  private async uploadCategoryIcon(
-    file: Express.Multer.File,
-    fileName: string,
-  ): Promise<string> {
-    // will return publicUrl
-
-    const { data, error } = await supabaseAdmin.storage
-      .from(BUCKET_NAMES.CATEGORIES_ICONS)
-      .upload(fileName, file.buffer, {
-        contentType: file.mimetype,
-        upsert: false,
-      });
-
-    console.log("Upload Data: " + data);
-
-    if (error) throw error;
-
-    const {
-      data: { publicUrl },
-    } = supabaseAdmin.storage
-      .from(BUCKET_NAMES.CATEGORIES_ICONS)
-      .getPublicUrl(fileName);
-
-    return publicUrl;
-  }
 
   public async addCategory(
     userId: string,
-    iconFile: Express.Multer.File | undefined,
-    data: CreateCategoryDTO,
+    data: CreateCategoryRequestPayload,
   ) {
-    let iconPublicUrl: string | null = null;
 
-    if (iconFile) {
-      // Uploading Category Icon
-      const iconFileName = `${data.name}-${iconFile.originalname}-${Date.now()}`;
-      iconPublicUrl = await this.uploadCategoryIcon(iconFile, iconFileName);
-      console.log(`category icon public Url: ${iconPublicUrl}`);
+    // Category Name
+    const normalizedCategoryName: string = data.name.trim().toLowerCase();
+
+    const existingCategory = await Category.findOne({
+      userId: userId,
+      isDeleted: false,
+      $or: [
+        { userId },
+        { userId: null }
+      ]
+    });
+
+    if (existingCategory) {
+      throw new HttpError("This Category is already exists!", 409);
     }
-
-    // Capitalizing the Category Name
-    const capitalizedName: string = data.name.capitalizeFirstLetter();
 
     // Adding Category
     const category = await Category.create({
-      userId,
-      ...data,
-      name: capitalizedName,
-      icon: iconPublicUrl,
-      isDefault: false,
+      userId: new Types.ObjectId(userId),
+      name: normalizedCategoryName,
+      type: data.type,
+      icon: data.icon ?? null,
+      color: data.color,
     });
 
     return category;
   }
 
-  public async deleteCategory(userId: string) {
+  public async deleteCategory(userId: string, categoryId: string) {
     const filter: QueryFilter<ICategory> = {
       userId: new Types.ObjectId(userId),
+      _id: new Types.ObjectId(categoryId)
     };
     const update = { isDeleted: true };
 
@@ -70,33 +51,70 @@ class CategoryService {
   }
 
   public async getCategoriesByType(userId: string, type: string) {
-    const categories = await Category.aggregate([
-      {
-        $match: {
-          type,
-          isDeleted: false,
-          $or: [{ isDefault: true }, { userId }],
-        },
-      },
-
-      {
-        $sort: { isDefault: 1, createdAt: -1 },
-      },
-
-      {
-        $group: {
-          _id: { $toLower: "$name" },
-          category: { $first: "$$ROOT" },
-        },
-      },
-
-      {
-        $replaceRoot: { newRoot: "$category" },
-      },
-    ]);
+    const categories = await Category.find({
+      type,
+      isDeleted: false,
+      $or: [
+        { userId },
+        { userId: null }
+      ]
+    })
+    .sort({ userId: 1, createdAt: -1 });
 
     return categories;
   }
+
+  public async updateCategory(userId: string, data: UpdateCategoryPayload) {
+    const { categoryId, name, icon, color } = data;
+
+    const category = await Category.findOne({
+      userId: new Types.ObjectId(userId),
+      id: new Types.ObjectId(categoryId)
+    });
+
+    if (!category) {
+      throw new HttpError('Category not found to update!', 400);
+    }
+
+    if (category.userId == null) {
+      throw new HttpError('Default Categories cannot be updated!', 409);
+    }
+
+    if (name) {
+      const normalizedName = name.trim().toLowerCase();
+
+      const existingCategory = await Category.findOne({
+        name: normalizedName,
+        isDeleted: false,
+        $or: [
+          { userId },
+          { userId: null }
+        ],
+        _id: { $ne: categoryId }
+      });
+
+      if (existingCategory) {
+        throw new HttpError('This Category is already exists!', 409);
+      }
+
+      category.name = normalizedName;
+    }
+
+    if (icon !== undefined) {
+      category.icon = icon;
+    }
+
+    if (color) {
+      category.color = color;
+    }
+
+    // Save Category
+    await category.save();
+
+    return category;
+  }
+
+  
 }
 
 

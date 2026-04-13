@@ -9,5 +9,9 @@ export const REQUEST_URL_CONSTANTS = {
     user: 'auth/user',
 
     // Wallet
-    createWallet: 'wallets/create'
+    createWallet: 'wallets/create',
+    
+
+    // Category
+    createCategory: 'categories/create'
 };
