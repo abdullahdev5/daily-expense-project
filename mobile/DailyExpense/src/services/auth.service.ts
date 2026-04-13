@@ -17,7 +17,7 @@ import {
   User,
   UserDTO,
 } from '../types/auth';
-import { getErrorMessage } from '../utils/error';
+import { errorResponse, getErrorMessage } from '../utils/error';
 import { mapAuthData, mapUser } from '../utils/mapper';
 import { getAccessToken } from './facebook.service';
 import { handleGoogleSignIn } from './google.service';
@@ -29,11 +29,9 @@ export const registerService = async (
     const res: ApiResponse<AuthDataDTO> = await registerApi(data);
 
     if (!res.data?.token) {
-      return {
-        success: false,
-        message: ERRORS.unknown,
-        data: undefined,
-      };
+      return errorResponse({
+        message: 'failed to get the Token!',
+      });
     }
 
     // Storing Token
@@ -44,11 +42,7 @@ export const registerService = async (
       data: res.data ? mapAuthData(res.data) : undefined,
     };
   } catch (e: any) {
-    return {
-      success: false,
-      message: getErrorMessage(e),
-      data: undefined,
-    };
+    return errorResponse({ message: getErrorMessage(e) });
   }
 };
 
@@ -59,11 +53,7 @@ export const loginService = async (
     const res: ApiResponse<AuthDataDTO> = await loginApi(data);
 
     if (!res.data?.token) {
-      return {
-        success: false,
-        message: ERRORS.unknown,
-        data: undefined,
-      };
+      return errorResponse({ message: 'failed to get the Token!' });
     }
 
     // Storing Token
@@ -74,11 +64,9 @@ export const loginService = async (
       data: res.data ? mapAuthData(res.data) : undefined,
     };
   } catch (e: any) {
-    return {
-      success: false,
+    return errorResponse({
       message: getErrorMessage(e),
-      data: undefined,
-    };
+    });
   }
 };
 
@@ -93,50 +81,40 @@ export const googleSignInService = async (): Promise<ApiResponse<AuthData>> => {
         ...res,
         data: res.data ? mapAuthData(res.data) : undefined,
       };
-    } else if (error) {
-      return {
-        success: false,
-        message: error,
-        data: undefined,
-      };
     } else {
-      return {
-        success: false,
-        message: ERRORS.unknown,
-      };
+      return errorResponse({
+        message: getErrorMessage(error),
+      });
     }
   } catch (e: any) {
-    return {
-      success: false,
+    return errorResponse({
       message: getErrorMessage(e),
-      data: undefined,
-    };
+    });
   }
 };
 
 export const facebookSignInService = async (): Promise<
   ApiResponse<AuthData>
 > => {
-  const { accessToken, error } = await getAccessToken();
+  try {
+    const { accessToken, error } = await getAccessToken();
 
-  if (accessToken) {
-    const res = await facebookSignInApi(accessToken);
+    if (accessToken) {
+      const res = await facebookSignInApi(accessToken);
 
-    return {
-      ...res,
-      data: res.data ? mapAuthData(res.data) : undefined,
-    };
-  } else if (error) {
-    return {
-      success: false,
-      message: error,
-      data: undefined,
-    };
-  } else {
-    return {
-      success: false,
-      message: ERRORS.unknown,
-    };
+      return {
+        ...res,
+        data: res.data ? mapAuthData(res.data) : undefined,
+      };
+    } else {
+      return errorResponse({
+        message: getErrorMessage(error),
+      });
+    }
+  } catch (e) {
+    return errorResponse({
+      message: getErrorMessage(e),
+    });
   }
 };
 
@@ -149,11 +127,9 @@ export const getUserService = async (): Promise<ApiResponse<User>> => {
       data: res.data ? mapUser(res.data) : undefined,
     };
   } catch (e: any) {
-    return {
-      success: false,
+    return errorResponse({
       message: getErrorMessage(e),
-      data: undefined,
-    };
+    });
   }
 };
 

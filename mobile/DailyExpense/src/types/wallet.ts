@@ -3,7 +3,6 @@ import { ReactNode } from "react";
 /* Models */
 export interface Wallet {
     id: string;
-    userId: string;
     name: string;
     type: WalletType;
     provider: AllWalletProviders | null;
@@ -16,7 +15,6 @@ export interface Wallet {
 /* DTO's */
 export interface WalletDTO {
     id?: string;
-    userId?: string;
     name?: string;
     type?: string;
     provider?: string | null;

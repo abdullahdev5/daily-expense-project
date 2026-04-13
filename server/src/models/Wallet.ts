@@ -39,6 +39,9 @@ const walletSchema = new mongoose.Schema<
 
         delete ret._id;
         delete ret.__v;
+        delete ret.userId;
+
+        return ret;
       },
     },
     toObject: {
@@ -47,6 +50,9 @@ const walletSchema = new mongoose.Schema<
 
         delete ret._id;
         delete ret.__v;
+        delete ret.userId;
+
+        return ret;
       },
     },
   },

@@ -34,7 +34,6 @@ export const mapAuthData = (authData: AuthDataDTO): AuthData => ({
 // Wallet Map
 export const mapWallet = (wallet: WalletDTO): Wallet => ({
     id: wallet.id ?? '',
-    userId: wallet.userId ?? '',
     name: wallet.name ?? '',
     type: (wallet.type ?? 'cash') as WalletType,
     provider: (wallet?.provider ?? null) as AllWalletProviders | null,
