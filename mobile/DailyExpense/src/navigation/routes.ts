@@ -11,6 +11,7 @@ export const AUTH_ROUTES = {
 
 export const APP_ROUTES = {
     mainTabs: 'mainTabs',
+    addTransaction: 'add_transaction'
 } as const;
 
 export const Main_TABS_ROUTES = {

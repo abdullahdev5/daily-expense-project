@@ -42,10 +42,9 @@ export type WalletDigitalProvider =
   | 'googlepay';
 
 
-export type AllWalletTypesAndProviders = WalletType | WalletCardProvider | WalletDigitalProvider;
-
 export type AllWalletProviders = WalletCardProvider | WalletDigitalProvider;
 
+export type AllWalletTypesAndProviders = WalletType | AllWalletProviders;
 export type CreateWalletPayload = {
     name: string;
     type: WalletType;

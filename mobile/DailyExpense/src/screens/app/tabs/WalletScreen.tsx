@@ -19,7 +19,7 @@ import {
   walletDigitalProviders,
   walletTypes,
 } from '../../../constants/walletConstants';
-import WalletDropdownItem from '@components/feature/wallet/WalletDropdownItem';
+import AddWalletDropdownItem from '@components/feature/wallet/AddWalletDropdownItem';
 import FormDropdownComponent from '@components/FormDropdown';
 import { isNullOrEmpty } from '../../../utils/string';
 import WalletIconRenderer from '@components/feature/wallet/WalletIconRenderer';
@@ -187,7 +187,7 @@ const AddWalletFormContent = ({
           data={walletTypes}
           placeholder="Select Wallet Type"
           renderItem={(item, selected) => (
-            <WalletDropdownItem item={item} selected={selected} />
+            <AddWalletDropdownItem item={item} selected={selected} />
           )}
           renderLeftSelectedIcon={item =>
             item.icon ? <WalletIconRenderer icon={item.icon} /> : null
@@ -214,7 +214,7 @@ const AddWalletFormContent = ({
               data={walletProvidersData}
               placeholder={'select the provider'}
               renderItem={(item, selected) => (
-                <WalletDropdownItem item={item} selected={selected} />
+                <AddWalletDropdownItem item={item} selected={selected} />
               )}
               renderLeftSelectedIcon={item =>
                 item.icon ? <WalletIconRenderer icon={item.icon} /> : null

@@ -1,5 +1,7 @@
 import { AuthData, AuthDataDTO, User, UserDTO } from "../types/auth";
 import { Category, CategoryColor, CategoryDTO, CategoryIcon } from "../types/category";
+import { Transaction, TransactionDTO, TransactionType } from "../types/transaction";
+import { CurrencyCode } from "../types/types";
 import { AllWalletProviders, Wallet, WalletDTO, WalletType } from "../types/wallet";
 
 const getDefaultUser = (): User => ({
@@ -53,4 +55,20 @@ export const mapCategory = (category: CategoryDTO): Category => ({
     isDefault: category.isDefault ?? true,
     createdAt: new Date(category.createdAt ?? Date.now()),
     updatedAt: new Date(category.updatedAt ?? Date.now())
-})
+});
+
+// Transaction Map
+export const mapTransaction = (transaction: TransactionDTO): Transaction => ({
+    id: transaction.id ?? '',
+    title: transaction.title ?? '',
+    description: transaction.description ?? 'expense',
+    type: (transaction.type ?? 'expense') as TransactionType,
+    amount: transaction.amount ?? 0,
+    categoryId: transaction.categoryId ? (typeof transaction.categoryId === 'object' ? mapCategory(transaction.categoryId) : transaction.categoryId) : '',
+    walletId: transaction.walletId ? (typeof transaction.walletId === 'object' ? mapWallet(transaction.walletId) : transaction.walletId) : '',
+    currency: (transaction.currency ?? 'PKR') as CurrencyCode,
+    date: new Date(transaction.date ?? Date.now()),
+    updatedAt: new Date(transaction.updatedAt ?? Date.now()),
+    merchantName: transaction.merchantName ?? '',
+    merchantLogo : transaction.merchantLogo || null,
+});

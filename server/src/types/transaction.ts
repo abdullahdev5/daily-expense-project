@@ -8,18 +8,22 @@ export interface ITransaction extends Document {
     categoryId: Types.ObjectId;
     type: TransactionType;
     date: Date;
-    paymentMethod: string;
     currency: string;
     walletId: Types.ObjectId;
+    merchantName: string;
+    merchantLogo?: string | null;
 }
 
 export interface ITransactionQueryHelpers {
-  query(filters: QueryFilter<ITransaction>): mongoose.Query<
-    mongoose.HydratedDocument<ITransaction>[],
-    mongoose.HydratedDocument<ITransaction>,
-    ITransactionQueryHelpers
-  >;
-  // query(filters: any): any;
+  // query(filters: QueryFilter<ITransaction>): mongoose.Query<
+  //   mongoose.HydratedDocument<ITransaction>[],
+  //   mongoose.HydratedDocument<ITransaction>,
+  //   ITransactionQueryHelpers
+  // >;
+  query(filters: any): any;
+  populateCategory(): any;
+  populateWallet(): any;
+  populateAll(): any;
 }
 
 
@@ -28,10 +32,10 @@ export interface CreateTransactionRequestDTO {
   description?: string | null;
   amount?: number;
   categoryId?: string;
-  type?: TransactionType;
-  paymentMethod?: string;
-  currency?: string;
+  type?: string;
   walletId?: string;
+  merchantName?: string;
+  date?: string | null;
 }
 
 export interface CreateTransactionDTO {
@@ -40,10 +44,14 @@ export interface CreateTransactionDTO {
   amount: number;
   categoryId: string;
   type: TransactionType;
-  paymentMethod: string;
-  currency: string;
   walletId: string;
+  merchantName: string;
+  date: Date;
 }
 
 
 export type TransactionType = "income" | "expense";
+export enum TransactionTypes {
+  income = 'income',
+  expense = 'expense'
+};

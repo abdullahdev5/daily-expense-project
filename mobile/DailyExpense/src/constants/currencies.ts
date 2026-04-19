@@ -1,12 +1,7 @@
 import { DropdownItem } from "@components/Dropdown";
+import { CurrencyBase } from "../types/types";
 
-export type Currency = {
-  code: string;
-  name: string;
-  symbol: string;
-};
-
-export const currencies: Currency[] = [
+export const currencies = [
   { code: 'PKR', name: 'Pakistani Rupee', symbol: '₨' },
   { code: 'USD', name: 'US Dollar', symbol: '$' },
   { code: 'EUR', name: 'Euro', symbol: '€' },
@@ -22,10 +17,10 @@ export const currencies: Currency[] = [
   { code: 'KRW', name: 'South Korean Won', symbol: '₩' },
   { code: 'SGD', name: 'Singapore Dollar', symbol: '$' },
   { code: 'MYR', name: 'Malaysian Ringgit', symbol: 'RM' },
-];
+] as const satisfies readonly CurrencyBase[];
 
 
-export const currenciesDropdownData: DropdownItem<Currency>[] = 
+export const currenciesDropdownData: DropdownItem<CurrencyBase>[] = 
     currencies.map(c => ({
         label: `${c.code} - ${c.name}`,
         value: c.code,

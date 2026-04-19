@@ -18,6 +18,12 @@ export interface IWalletMethods {
 }
 
 export type WalletType = 'cash' | 'bank' | 'card' | 'digital';
+export enum WalletTypes {
+    cash = 'cash',
+    bank = 'bank',
+    card = 'card',
+    digital = 'digital'
+};
 
 
 export interface CreateWalletRequestDTO {

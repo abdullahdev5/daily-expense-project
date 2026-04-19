@@ -12,5 +12,6 @@ export const radius = {
     md: 15,
     lg: 20,
     xLg: 25,
-    xxLg: 30
+    xxLg: 30,
+    none: 0
 }

@@ -17,14 +17,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppFAB from '@components/FAB';
 import { colors } from '../../../theme/colors';
 import { AppGlowEffect } from '../../../components/GlowEffect';
-import { MainTabsStackParamList } from '../../../navigation/types';
+import { AppNavigation, MainTabsStackParamList } from '../../../navigation/types';
 import AppSvgIcon from '@components/SvgIcon';
+import { useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator<MainTabsStackParamList>();
 
 const MainTabs = () => {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
+  const appNavigation = useNavigation<AppNavigation>()
 
   return (
     <AppScreen>
@@ -130,6 +132,7 @@ const MainTabs = () => {
                   offsetY={10}
                   onPress={() => {
                     // navigate to add transaction screen
+                    appNavigation.navigate('add_transaction');
                   }}
                 >
                   <AppIcon name="add" color={colors.white} size={30} />

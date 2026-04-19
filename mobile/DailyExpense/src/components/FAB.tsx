@@ -20,6 +20,7 @@ type AppFABProps = {
   size?: number;
   position?: FABPosition;
   borderRadius?: FABRadius;
+  disabled?: boolean;
 
   offsetX?: number;
   offsetY?: number;
@@ -36,6 +37,7 @@ const AppFAB = ({
   size = 60,
   position = 'bottom-right',
   borderRadius = 'circular',
+  disabled = false,
   offsetX = 16,
   offsetY = 16,
   backgroundColor,
@@ -45,8 +47,9 @@ const AppFAB = ({
 }: AppFABProps) => {
   const { theme } = useTheme();
 
-  const finalGradient =
-    gradientColors ?? theme.colors.primaryGradient;
+  const finalGradient = gradientColors ?? theme.colors.primaryGradient;
+  const disabledColor = theme.colors.disabled;
+
 
   // Border Radius
   const getRadius = () => {
@@ -132,20 +135,21 @@ const AppFAB = ({
     <TouchableOpacity
       activeOpacity={0.5}
       onPress={onPress}
+      disabled={disabled}
       style={[getPositionStyle(), style]}
     >
       {backgroundColor ? (
         <View
           style={[
             containerStyle,
-            { backgroundColor },
+            { backgroundColor: disabled ? disabledColor : backgroundColor },
           ]}
         >
           {children}
         </View>
       ) : (
         <LinearGradient
-          colors={finalGradient}
+          colors={disabled ? [disabledColor, disabledColor] : finalGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={containerStyle}

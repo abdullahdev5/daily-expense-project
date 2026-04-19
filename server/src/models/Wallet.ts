@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { MODEL_NAMES } from "../constants/dbConstants";
-import { IWallet, IWalletMethods } from "../types/wallet";
+import { IWallet, IWalletMethods, WalletTypes } from "../types/wallet";
 import { TransactionType } from "../types/transaction";
 
 const walletSchema = new mongoose.Schema<
@@ -17,7 +17,7 @@ const walletSchema = new mongoose.Schema<
     name: { type: String, required: true, trim: true },
     type: {
       type: String,
-      enum: ['cash', 'bank', 'card', 'digital'],
+      enum: Object.values(WalletTypes),
       default: 'cash',
       trim: true
     },

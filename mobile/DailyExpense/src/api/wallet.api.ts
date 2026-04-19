@@ -10,3 +10,10 @@ export const createWalletApi = async (data: CreateWalletPayload) => {
 
     return res.data;
 };
+
+export const getWalletsApi = async () => {
+    const res = apiClient.get<ApiResponse<WalletDTO[]>>
+    (REQUEST_URL_CONSTANTS.getWallets);
+
+    return (await res).data;
+}

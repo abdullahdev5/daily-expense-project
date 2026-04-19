@@ -15,6 +15,7 @@ export type AuthStackParamList = {
 
 export type AppStackParamList = {
     [APP_ROUTES.mainTabs]: NavigatorScreenParams<MainTabsStackParamList>;
+    [APP_ROUTES.addTransaction]: undefined;
 }
 
 export type MainTabsStackParamList = {

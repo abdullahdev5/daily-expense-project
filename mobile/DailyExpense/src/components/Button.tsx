@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleProp,
   GestureResponderEvent,
+  TextStyle,
 } from 'react-native';
 import React, { ReactNode } from 'react';
 import { useTheme } from '../theme/ThemeProvider';
@@ -27,6 +28,8 @@ type AppButtonProps = {
   gradientColors?: string[];
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
+  buttonStyle?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 };
 
 const AppButton = ({
@@ -41,6 +44,8 @@ const AppButton = ({
   gradientColors,
   disabled = false,
   style,
+  buttonStyle,
+  textStyle,
 }: AppButtonProps) => {
   const { theme } = useTheme();
 
@@ -51,7 +56,7 @@ const AppButton = ({
   const content =
     typeof children == 'string' ? (
       <AppText
-        style={{ color: disabled ? colors.black : foregroundColor ?? 'white' }}
+        style={[{ color: disabled ? colors.black : foregroundColor ?? 'white' }, textStyle]}
       >
         {children}
       </AppText>
@@ -59,7 +64,7 @@ const AppButton = ({
       children
     );
 
-  const buttonStyle: ViewStyle = {
+  const internalButtonStyle: ViewStyle = {
     borderRadius: finalBorderRadius,
     paddingHorizontal: 15,
     paddingVertical: 10,
@@ -89,15 +94,16 @@ const AppButton = ({
           }
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          style={[buttonStyle]}
+          style={[internalButtonStyle, buttonStyle]}
         >
           {content}
         </LinearGradient>
       ) : (
         <View
           style={[
-            buttonStyle,
+            internalButtonStyle,
             { backgroundColor: disabled ? disabledColor : backgroundColor },
+            buttonStyle
           ]}
         >
           {content}

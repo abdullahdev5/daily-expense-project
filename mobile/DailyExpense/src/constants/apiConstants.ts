@@ -10,8 +10,13 @@ export const REQUEST_URL_CONSTANTS = {
 
     // Wallet
     createWallet: 'wallets/create',
+    getWallets: 'wallets',
     
 
     // Category
-    createCategory: 'categories/create'
+    createCategory: 'categories/create',
+    getCategories: 'categories',
+
+    // Transaction
+    createTransaction: 'transactions/create'
 };

@@ -5,6 +5,8 @@ import express from "express";
 import { connect as connectDB, disconnect as disconnectDB } from "./config/db";
 import authRoutes from "./routes/authRoutes";
 import walletRoutes from "./routes/wallet.routes";
+import categoriesRoutes from "./routes/category.routes";
+import transactionRoutes from "./routes/transaction.routes";
 import { Server } from "socket.io";
 import http from "http";
 import errorHandler from "./middleware/errorHandler";
@@ -28,6 +30,12 @@ app.use("/api/auth", authRoutes);
 
 // wallet routes
 app.use('/api', walletRoutes);
+
+// categories routes
+app.use('/api', categoriesRoutes);
+
+// transaction routes
+app.use('/api', transactionRoutes);
 
 
 // Express js Error Handling middleware

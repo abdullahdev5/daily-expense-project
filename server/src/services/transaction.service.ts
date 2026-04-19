@@ -10,17 +10,19 @@ import { HttpError } from "../utils/errors.util";
 import { Types } from "mongoose";
 import { dashboardService } from "./dashboard.service";
 import { SOCKET_EVENTS } from "../constants/socketEvents";
+import { getMerchantLogoDomain, getMerchantLogoUrl } from "../utils/transaction.utils";
 
 class TransactionService {
   // Add Transaction
   public async addTransaction(userId: string, data: CreateTransactionDTO) {
 
     const walletObjectId = new Types.ObjectId(data.walletId);
+    const userObjectId = new Types.ObjectId(userId);
 
     // Get the Wallet
     const wallet = await Wallet.findOne({
       _id: walletObjectId,
-      userId: new Types.ObjectId(userId),
+      userId: userObjectId,
     });
 
     if (!wallet) {
@@ -30,10 +32,17 @@ class TransactionService {
     // Updating Balance
     await wallet.updatebalance(data.type, data.amount);
 
+    // Updating Merchant Logo
+    const merchantLogoDomain = getMerchantLogoDomain(data.merchantName);
+    const merchantLogoUrl = await getMerchantLogoUrl(merchantLogoDomain);
+
     // Adding Transaction
     const transaction = await Transaction.create({
-      userId: new Types.ObjectId(userId),
+      userId: userObjectId,
       ...data,
+      
+      currency: wallet.currency,
+      merchantLogo: merchantLogoUrl,
       categoryId: new Types.ObjectId(data.categoryId),
       walletId: walletObjectId,
     });
@@ -65,7 +74,7 @@ class TransactionService {
   public async getTransactions(userId: string, query: any) {
     return await Transaction.find({ userId: new Types.ObjectId(userId) })
         .query(query)
-        .populate("categoryId", "name icon")
+        .populateAll()
         .sort({ date: -1 });
   }
 }

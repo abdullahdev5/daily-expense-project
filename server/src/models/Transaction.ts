@@ -3,6 +3,7 @@ import {
   ITransaction,
   ITransactionQueryHelpers,
   TransactionType,
+  TransactionTypes,
 } from "../types/transaction";
 import { MODEL_NAMES } from "../constants/dbConstants";
 
@@ -29,21 +30,9 @@ const transactionSchema = new mongoose.Schema<
     type: {
       type: String,
       required: true,
-      enum: ["income", "expense"],
+      enum: Object.values(TransactionTypes),
     },
     date: { type: Date, defaukt: Date.now },
-    paymentMethod: {
-      type: String,
-      default: "Cash",
-      enum: [
-        "Cash",
-        "Debit Card",
-        "Credit Card",
-        "Bank Transfer",
-        "Mobile Wallet",
-        "Other",
-      ],
-    },
     currency: {
       type: String,
       required: true,
@@ -54,6 +43,12 @@ const transactionSchema = new mongoose.Schema<
       ref: MODEL_NAMES.WALLET,
       required: true,
     },
+    merchantName: { type: String, trim: true },
+    merchantLogo: {
+      type: String,
+      default: null,
+      trim: true,
+    }
     // merchantName: String,
     // location: String,
     // notes: String,
@@ -76,6 +71,9 @@ const transactionSchema = new mongoose.Schema<
 
         delete ret._id;
         delete ret.__v;
+        delete ret.userId;
+
+        return ret;
       },
     },
     toObject: {
@@ -84,20 +82,23 @@ const transactionSchema = new mongoose.Schema<
 
         delete ret._id;
         delete ret.__v;
+        delete ret.userId;
+
+        return ret;
       },
     },
   },
 );
 
 transactionSchema.query.query = function (
-  this: mongoose.Query<
-    mongoose.HydratedDocument<ITransaction>[],
-    mongoose.HydratedDocument<ITransaction>,
-    ITransactionQueryHelpers
-  >,
-  filters: QueryFilter<ITransaction>,
-  // this: any,
-  // filters: any
+  // this: mongoose.Query<
+  //   mongoose.HydratedDocument<ITransaction>[],
+  //   mongoose.HydratedDocument<ITransaction>,
+  //   ITransactionQueryHelpers
+  // >,
+  // filters: QueryFilter<ITransaction>,
+  this: any,
+  filters: any
 ) {
   if (filters.title) {
     this.where({
@@ -124,6 +125,18 @@ transactionSchema.query.query = function (
 
   return this;
 };
+
+transactionSchema.query.populateCategory = function (this: any) {
+  return this.populate("categoryId", "name type icon color createdAt");
+};
+
+transactionSchema.query.populateWallet = function (this: any) {
+  return this.populate("walletId", "name type provider balance currency createdAt");
+};
+
+transactionSchema.query.populateAll = function (this: any) {
+  return this.populateCategory().populateWallet();
+}
 
 export const Transaction = mongoose.model<
   ITransaction,

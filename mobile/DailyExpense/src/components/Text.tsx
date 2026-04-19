@@ -1,4 +1,4 @@
-import { View, Text, ColorValue, TextProps, TextStyle } from 'react-native';
+import { View, Text, ColorValue, TextProps, TextStyle, StyleProp } from 'react-native';
 import React, { Children, ReactNode } from 'react';
 import { FontWeight, TextDecoration } from '../types/styles';
 import { useTheme } from '../theme/ThemeProvider';
@@ -10,7 +10,7 @@ type AppTextProps = TextProps & {
   fontWeight?: FontWeight;
   textDecoration?: TextDecoration;
   textDecorationColor?: ColorValue;
-  style?: TextStyle | TextStyle[];
+  style?: StyleProp<TextStyle | TextStyle[]>;
 };
 
 const AppText = ({

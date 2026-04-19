@@ -1,44 +1,49 @@
-import { View, Text, StyleSheet } from 'react-native';
-import React from 'react';
-import { AllWalletTypesAndProviders } from '../../../types/wallet';
-import { DropdownItem } from '@components/Dropdown';
-import { Column, Row } from '@components/Layout';
-import AppText from '@components/Text';
-import { getWalletIcon } from '../../../utils/wallet.utils';
-import { useTheme } from '../../../theme/ThemeProvider';
-import { colors } from '../../../theme/colors';
-import WalletIconRenderer from './WalletIconRenderer';
+import { View, Text } from 'react-native'
+import React, { useMemo } from 'react'
+import { DropdownItem } from '@components/Dropdown'
+import { AllWalletProviders, AllWalletTypesAndProviders, Wallet, WalletType } from '../../../types/wallet'
+import { Column, Row } from '@components/Layout'
+import WalletIconRenderer from './WalletIconRenderer'
+import AppText from '@components/Text'
+import { colors } from '../../../theme/colors'
+import { useTheme } from '../../../theme/ThemeProvider'
 
-type WalletDropdownItemProps = {
-  item: DropdownItem<AllWalletTypesAndProviders>;
-  selected: boolean | undefined;
-};
+type WalletDropdownItem = {
+    item: DropdownItem<Wallet>;
+    selected?: boolean | undefined;
+}
 
-const WalletDropdownItem = ({ item, selected }: WalletDropdownItemProps) => {
+const WalletDropdownItem = ({ item, selected }: WalletDropdownItem) => {
   const { theme } = useTheme();
 
+  const icon = useMemo<AllWalletTypesAndProviders | null>(() => {
+    const data = item.data;
+    if (data.type !== 'card' && data.type !== 'digital') {
+        return data.type;
+    } else {
+        return data.provider;
+    }
+  }, [item.data])
+
   return (
-    <Column
-      crossAxisAlignment="flex-start"
-      style={{
-        padding: 10,
-        borderBottomWidth: selected ? 1 : 0,
-        borderBottomColor: theme.colors.outline,
-      }}
-    >
-      {selected && (
-        <AppText 
-            color={colors.grey}
-            fontSize={theme.fontSize.xSmall}
-            style={{ paddingBottom: 5 }}>selected:</AppText>
-      )}
+    <Column spacing={10} style={{ paddingVertical: 10, paddingHorizontal: 20 }}>
+        <Row spacing={20}>
+            {icon && (<WalletIconRenderer icon={icon} />)}
 
-      <Row spacing={20}>
-        {item.icon && (<WalletIconRenderer icon={item.icon} />)}
-        <AppText>{item.label}</AppText>
-      </Row>
+            <AppText>{item.label}</AppText>
+        </Row>
+
+        {selected && (
+            <View
+                style={{
+                    flex: 1,
+                    height: 1,
+                    backgroundColor: theme.colors.outline,
+                }}
+            />
+        )}
     </Column>
-  );
-};
+  )
+}
 
-export default WalletDropdownItem;
+export default WalletDropdownItem

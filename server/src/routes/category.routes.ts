@@ -21,3 +21,7 @@ router.get('/categories', protect, getCategoriesByType);
 // Update Category
 // PUT(/categories/update/:id)
 router.put('/categories/update/:id', protect, updateCategory);
+
+
+
+export default router;

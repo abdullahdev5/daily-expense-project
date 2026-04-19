@@ -9,4 +9,15 @@ export const addCategoryApi = async (data: CreateCategoryPayload) => {
         (REQUEST_URL_CONSTANTS.createCategory, data);
 
     return res.data;
-}
+};
+
+export const getCategoriesApi = async (type: string) => {
+    const url = new URL(REQUEST_URL_CONSTANTS.getCategories);
+    url.searchParams.append('type', type);
+
+
+    const res = await apiClient.get<ApiResponse<CategoryDTO[]>>
+        (url.toString());
+
+    return res.data;
+};
