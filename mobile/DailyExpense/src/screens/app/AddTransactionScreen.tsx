@@ -306,6 +306,7 @@ const AddTransactionScreen = () => {
                           inputStyle={{ paddingStart: 0 }}
                           border="underlined"
                           unfocussedBorderColor={theme.colors.outline}
+                          filled={false}
                         />
                       </LabeledInput>
                     </Pressable>
@@ -319,6 +320,12 @@ const AddTransactionScreen = () => {
                         }}
                         inputContainerStyle={{ paddingHorizontal: 0 }}
                         inputStyle={{ paddingStart: 0 }}
+                        prefixIcon={(
+                          <AppText>{selectedWallet
+                            ? getCurrencySymbol(selectedWallet.currency)
+                            : ''
+                          }</AppText>
+                        )}
                         name="amount"
                         submitCount={submitCount}
                         validator={value => {
@@ -340,6 +347,7 @@ const AddTransactionScreen = () => {
                         border="underlined"
                         keyboardType="decimal-pad"
                         unfocussedBorderColor={theme.colors.outline}
+                        filled={false}
                         returnKeyType='next'
                         submitBehavior='submit'
                         onSubmitEditing={() => moveFocusToNextInput('merchantName')}
@@ -443,6 +451,7 @@ const AddTransactionScreen = () => {
                         placeholder="e.g. Amazon, Starbucks"
                         border="underlined"
                         unfocussedBorderColor={theme.colors.outline}
+                        filled={false}
                         returnKeyType='next'
                         submitBehavior='submit'
                         onSubmitEditing={() => moveFocusToNextInput('title')}
@@ -469,6 +478,7 @@ const AddTransactionScreen = () => {
                         }}
                         placeholder="(required)"
                         border="underlined"
+                        filled={false}
                         unfocussedBorderColor={theme.colors.outline}
                       />
                     </LabeledInput>
@@ -485,6 +495,7 @@ const AddTransactionScreen = () => {
                         validator={() => undefined}
                         placeholder="(Optional)"
                         border="underlined"
+                        filled={false}
                         unfocussedBorderColor={theme.colors.outline}
                       />
                     </LabeledInput>
@@ -515,6 +526,7 @@ const AddTransactionScreen = () => {
                             inputContainerStyle={{ paddingHorizontal: 0 }}
                             inputStyle={{ paddingStart: 0 }}
                             border="underlined"
+                            filled={false}
                             unfocussedBorderColor={theme.colors.outline}
                           />
                         </LabeledInput>
@@ -532,6 +544,7 @@ const AddTransactionScreen = () => {
                             inputContainerStyle={{ paddingHorizontal: 0 }}
                             inputStyle={{ paddingStart: 0 }}
                             border="underlined"
+                            filled={false}
                             unfocussedBorderColor={theme.colors.outline}
                           />
                         </LabeledInput>

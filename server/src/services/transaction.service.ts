@@ -1,6 +1,7 @@
 import {
   CreateTransactionDTO,
   ITransaction,
+  TransactionDTO,
   TransactionType,
 } from "../types/transaction";
 import { socketService } from "./socket.service";
@@ -11,6 +12,7 @@ import { Types } from "mongoose";
 import { dashboardService } from "./dashboard.service";
 import { SOCKET_EVENTS } from "../constants/socketEvents";
 import { getMerchantLogoDomain, getMerchantLogoUrl } from "../utils/transaction.utils";
+import { User } from "../models/User";
 
 class TransactionService {
   // Add Transaction
@@ -36,6 +38,10 @@ class TransactionService {
     const merchantLogoDomain = getMerchantLogoDomain(data.merchantName);
     const merchantLogoUrl = await getMerchantLogoUrl(merchantLogoDomain);
 
+    console.log('Merchant Name: ', data.merchantName);
+    console.log('Generated Merchant Domain: ', merchantLogoDomain);
+    console.log('Final Merchant Logo Url: ', merchantLogoUrl);
+
     // Adding Transaction
     const transaction = await Transaction.create({
       userId: userObjectId,
@@ -47,35 +53,50 @@ class TransactionService {
       walletId: walletObjectId,
     });
 
+    // Emit the Dashboard Data & New Transaction to the Socket User
     try {
-      // Emit the Dashboard Data & New Transaction to the Socket User
-      const updatedDashboardData =
-        await dashboardService.getDashboardData(userId);
-      // Emit updated dashboard data
-      socketService.emitToUser(
-        userId,
-        SOCKET_EVENTS.DASHBOARD_UPDATED,
-        updatedDashboardData,
-      );
-      // Emit new transaction
-      socketService.emitToUser(
-        userId,
-        SOCKET_EVENTS.NEW_TRANSACTION,
-        transaction,
-      );
+      const user = await User.findById({ _id: userObjectId });
+      const newTransaction = await Transaction.getWithDetails({
+        query: {
+          userId: user?._id,
+          _id: transaction._id
+        }
+      });
+      const newTransactionObj = newTransaction[0] as unknown as TransactionDTO;
+      
+      if (user && user.baseCurrency) {
+        await Promise.all([
+          socketService.emitToUser<TransactionDTO>(
+            userId,
+            'new_transaction',
+            newTransactionObj
+          ),
+          dashboardService.emitDashboardUpdate(userId, user.baseCurrency),
+        ])
+      }
     } catch (socketError) {
       console.log("Socket emission failed: ", socketError);
     }
+
+    console.log('Transaction is Added: ', JSON.stringify(transaction.toObject()))
 
     return transaction;
   }
 
 
-  public async getTransactions(userId: string, query: any) {
+  public async getTransactions(userId: string, query: any, page: number, limit: number) {
     return await Transaction.find({ userId: new Types.ObjectId(userId) })
         .query(query)
-        .populateAll()
+        .skip((page - 1) * limit)
+        .limit(limit)
         .sort({ date: -1 });
+  }
+
+  public async getTransactionsWithDetails(userId: string, limit: number) {
+    return await Transaction.getWithDetails({
+      query: { userId: userId },
+      limit: limit
+    });
   }
 }
 

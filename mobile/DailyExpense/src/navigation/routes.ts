@@ -1,7 +1,8 @@
 
 export const ROUTES = {
     auth: 'auth',
-    app: 'app'
+    app: 'app',
+    setBaseCurrency: 'set-base-currency',
 } as const;
 
 export const AUTH_ROUTES = {

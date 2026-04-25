@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { User } from "../types/auth"
-import { getUserService } from "../services/auth.service";
+import { getUserService } from "../services/user.service";
 import { ERRORS } from "../constants/errorConstants";
 import { getErrorMessage } from "../utils/error";
 

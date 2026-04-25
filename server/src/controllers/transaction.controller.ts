@@ -1,4 +1,4 @@
-import { CreateTransactionDTO, CreateTransactionRequestDTO, TransactionType } from "../types/transaction";
+import { CreateTransactionDTO, CreateTransactionRequestDTO, ITransaction, TransactionType } from "../types/transaction";
 import { NextFunction, Request, Response } from "express";
 import { responseHelper } from "../helpers/responseHelper";
 import { transactionService } from "../services/transaction.service";
@@ -65,11 +65,26 @@ const getTransactions = async (
   next: NextFunction,
 ) => {
   try {
+    const { includeDetails, page = 1, limit = 10 } = req.query;
     const userId = req.user!._id;
-    const transactions = await transactionService.getTransactions(
+
+    let transactions: any[] = [];
+
+    if (includeDetails === 'true') {
+      transactions = await transactionService.getTransactionsWithDetails(
+        userId.toString(),
+        Number(limit)
+      );
+    }
+
+    // default
+    transactions = await transactionService.getTransactions(
       userId.toString(),
       req.query,
+      Number(page),
+      Number(limit)
     );
+    
     return responseHelper.sendSuccess(
       res,
       transactions,

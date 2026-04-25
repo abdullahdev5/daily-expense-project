@@ -15,35 +15,53 @@ import { userStore } from '../store/userStore';
 import AppScreen from '../components/AppScreen';
 import AppActivityLoader from '../components/Loader';
 import AddTransactionScreen from '../screens/app/AddTransactionScreen';
+import SetBaseCurrencyScreen from '../screens/SetBaseCurrencyScreen';
+import { useEffect } from 'react';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const AppStack = createNativeStackNavigator<AppStackParamList>();
 
 function AppNavigator() {
-  // const isLoading = userStore(s => s.isLoading);
-  // const user = userStore((s) => s.user);
+  const isLoading = userStore(s => s.isLoading);
+  const user = userStore((s) => s.user);
 
-  // if (isLoading) {
-  //   return (
-  //     <AppScreen style={{ justifyContent: 'center', alignItems: 'center' }}>
-  //       <AppActivityLoader />
-  //     </AppScreen>
-  //   );
-  // }
+  useEffect(() => {
+    console.log('User: ', JSON.stringify(user));
+  }, [user])
+
+  if (isLoading) {
+    return (
+      <AppScreen style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <AppActivityLoader />
+      </AppScreen>
+    );
+  }
 
   return (
     <NavigationContainer ref={navigationRef}>
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        {/* {user ? (
-          <RootStack.Screen name={ROUTES.app} component={AppStackScreens} options={{ headerShown: false }} />
+        {user ? (
+          user.baseCurrency ? (
+            <RootStack.Screen
+              name={ROUTES.app}
+              component={AppStackScreens}
+              options={{ headerShown: false }} 
+            />
+          ) : (
+            <RootStack.Screen
+              name={ROUTES.setBaseCurrency}
+              component={SetBaseCurrencyScreen}
+              options={{ headerShown: false }}
+            />
+          )
         ) : (
           <RootStack.Screen
             name={ROUTES.auth}
             component={AuthStackScreens}
           />
-        )} */}
-        <RootStack.Screen name={ROUTES.app} component={AppStackScreens} />
+        )}
+        {/* <RootStack.Screen name={ROUTES.app} component={AppStackScreens} /> */}
       </RootStack.Navigator>
     </NavigationContainer>
   );

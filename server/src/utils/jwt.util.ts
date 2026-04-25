@@ -11,6 +11,6 @@ export const generateJwtToken = (user: UserPayload) => {
   }
 
   return jwt.sign({ _id: user._id, email: user.email }, secret, {
-    expiresIn: "10m",
+    expiresIn: "1d",
   });
 };

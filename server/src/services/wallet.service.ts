@@ -19,6 +19,8 @@ class WalletService {
       ...data
     });
 
+    console.log('Wallet is Added: ', JSON.stringify(data));
+
     return wallet;
   }
 

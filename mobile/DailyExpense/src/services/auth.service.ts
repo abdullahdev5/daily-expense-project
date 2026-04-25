@@ -1,6 +1,5 @@
 import {
   facebookSignInApi,
-  getUserApi,
   googleSignInApi,
   loginApi,
   registerApi,
@@ -116,25 +115,4 @@ export const facebookSignInService = async (): Promise<
       message: getErrorMessage(e),
     });
   }
-};
-
-export const getUserService = async (): Promise<ApiResponse<User>> => {
-  try {
-    const res: ApiResponse<UserDTO> = await getUserApi();
-
-    return {
-      ...res,
-      data: res.data ? mapUser(res.data) : undefined,
-    };
-  } catch (e: any) {
-    return errorResponse({
-      message: getErrorMessage(e),
-    });
-  }
-};
-
-export const logoutService = () => {
-  removeToken();
-  userStore.getState().logout();
-  console.log('Logout()');
 };

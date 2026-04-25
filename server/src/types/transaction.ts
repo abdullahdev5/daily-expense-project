@@ -1,4 +1,4 @@
-import mongoose, { Document, QueryFilter, Types } from "mongoose";
+import mongoose, { Document, Model, QueryFilter, Types } from "mongoose";
 
 export interface ITransaction extends Document {
     userId: Types.ObjectId;
@@ -14,6 +14,17 @@ export interface ITransaction extends Document {
     merchantLogo?: string | null;
 }
 
+export interface ITransactionModel
+  extends Model<ITransaction, ITransactionQueryHelpers> {
+
+  getWithDetails(options: {
+    // userId: string;
+    // id?: string;
+    query?: Record<string, any>;
+    limit?: number;
+  }): Promise<any[]>;
+}
+
 export interface ITransactionQueryHelpers {
   // query(filters: QueryFilter<ITransaction>): mongoose.Query<
   //   mongoose.HydratedDocument<ITransaction>[],
@@ -24,6 +35,21 @@ export interface ITransactionQueryHelpers {
   populateCategory(): any;
   populateWallet(): any;
   populateAll(): any;
+}
+
+
+export interface TransactionDTO {
+    id: string;
+    title: string;
+    description?: string | null,
+    amount: number;
+    categoryId: string;
+    type: string;
+    date: string;
+    currency: string;
+    walletId: string;
+    merchantName: string;
+    merchantLogo?: string | null;
 }
 
 

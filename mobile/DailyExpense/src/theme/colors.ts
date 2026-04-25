@@ -20,7 +20,7 @@ export const darkColors = {
   secondary: colors.orange,
   text: colors.white,
   background: colors.dark,
-  secondaryBackground: colors.lightDark,
+  secondaryBackground: '#201E43',
   white: colors.white,
   black: colors.black,
   orange: colors.orange,

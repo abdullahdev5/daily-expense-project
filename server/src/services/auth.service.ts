@@ -118,10 +118,6 @@ class AuthService {
     };
   }
 
-  public async getUser(userId: string) {
-    return User.findById(userId);
-  }
-
   /* Private Functions */
   private async verifyGoogelToken(
     idToken: string,

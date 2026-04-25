@@ -34,7 +34,7 @@ export const getCategoriesService = async (
     return {
       ...res,
 
-      data: fakeCategoriesData,
+      data: mappedData,
     };
   } catch (e) {
     return errorResponse({ message: getErrorMessage(e) });

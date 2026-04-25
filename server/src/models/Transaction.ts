@@ -1,15 +1,17 @@
-import mongoose, { QueryFilter } from "mongoose";
+import mongoose, { QueryFilter, Types } from "mongoose";
 import {
   ITransaction,
+  ITransactionModel,
   ITransactionQueryHelpers,
   TransactionType,
   TransactionTypes,
 } from "../types/transaction";
-import { MODEL_NAMES } from "../constants/dbConstants";
+import { COLLECTION_NAMES, MODEL_NAMES } from "../constants/dbConstants";
 
 const transactionSchema = new mongoose.Schema<
   ITransaction,
-  mongoose.Model<ITransaction, ITransactionQueryHelpers, {}>,
+  ITransactionModel,
+  // mongoose.Model<ITransaction, ITransactionQueryHelpers, {}>,
   {},
   ITransactionQueryHelpers
 >(
@@ -32,7 +34,7 @@ const transactionSchema = new mongoose.Schema<
       required: true,
       enum: Object.values(TransactionTypes),
     },
-    date: { type: Date, defaukt: Date.now },
+    date: { type: Date, default: Date.now },
     currency: {
       type: String,
       required: true,
@@ -90,6 +92,8 @@ const transactionSchema = new mongoose.Schema<
   },
 );
 
+
+/* Query Methods */
 transactionSchema.query.query = function (
   // this: mongoose.Query<
   //   mongoose.HydratedDocument<ITransaction>[],
@@ -136,9 +140,118 @@ transactionSchema.query.populateWallet = function (this: any) {
 
 transactionSchema.query.populateAll = function (this: any) {
   return this.populateCategory().populateWallet();
-}
+};
+
+/* Statics Methods */
+transactionSchema.statics.getWithDetails = async function ({
+  // userId,
+  // id,
+  query,
+  limit = 5
+}: {
+  // userId: string;
+  // id: string;
+  query?: Record<string, any>;
+  limit?: number;
+}) {
+  
+  const sanitizedQuery = { ...query };
+
+  if (sanitizedQuery.userId) {
+    sanitizedQuery.userId = new mongoose.Types.ObjectId(sanitizedQuery.userId);
+  }
+
+  if (sanitizedQuery._id) {
+    sanitizedQuery._id = new mongoose.Types.ObjectId(sanitizedQuery._id);
+  }
+
+  return this.aggregate([
+    { $match: sanitizedQuery },
+
+    { $sort: { createdAt: -1 } },
+    { $limit: limit },
+
+    // CATEGORY
+    {
+      $lookup: {
+        from: COLLECTION_NAMES.categories,
+        localField: "categoryId",
+        foreignField: "_id",
+        as: "category"
+      }
+    },
+    // { $unwind: "$category" },
+    { $unwind: { path: "$category" } },
+
+    // WALLET
+    {
+      $lookup: {
+        from: COLLECTION_NAMES.wallets,
+        localField: "walletId",
+        foreignField: "_id",
+        as: "wallet"
+      }
+    },
+    { $unwind: { path: "$wallet" } },
+
+    // FINAL SHAPE
+    {
+      $addFields: {
+        id: "$_id",
+
+        categoryId: "$category._id",
+        walletId: "$wallet._id",
+
+        category: {
+          id: "$category._id",
+          name: "$category.name",
+          color: "$category.color",
+          icon: "$category.icon"
+        },
+
+        wallet: {
+          id: "$wallet._id",
+          name: "$wallet.name",
+          type: "$wallet.type",
+          provider: "$wallet.provider",
+          currency: "$wallet.currency"
+        },
+      }
+      // $project: {
+      //   id: "$_id",
+      //   title: 1,
+      //   amount: 1,
+      //   type: 1,
+      //   currency: 1,
+      //   date: 1,
+
+      //   categoryId: "$category._id",
+      //   walletId: "$wallet._id",
+
+      //   category: {
+      //     id: "$category._id",
+      //     name: "$category.name",
+      //     color: "$category.color",
+      //     icon: "$category.icon"
+      //   },
+
+      //   wallet: {
+      //     id: "$wallet._id",
+      //     name: "$wallet.name",
+      //     type: "$wallet.type",
+      //     provider: "$wallet.provider",
+      //     currency: "$wallet.currency"
+      //   },
+
+      //   merchantName: 1,
+      //   merchantLogo: 1
+      // }
+    }
+  ]);
+};
 
 export const Transaction = mongoose.model<
   ITransaction,
-  mongoose.Model<ITransaction, ITransactionQueryHelpers, {}>
+  ITransactionModel
+  // mongoose.Model<ITransaction, ITransactionQueryHelpers, {}>
 >(MODEL_NAMES.TRANSACTION, transactionSchema);

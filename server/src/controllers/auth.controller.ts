@@ -108,24 +108,4 @@ const facebookAuth = async (
 }
 
 
-const getUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const userId = req.user!._id;
-    const user = await authService.getUser(userId.toString());
-    // sending response
-    return responseHelper.sendSuccess(
-      res,
-      user,
-      "User fetched Successfully"
-    );
-  } catch (e: any) {
-    next(e);
-  }
-}
-
-
-export { registerUser, login, googleAuth, facebookAuth, getUser };
+export { registerUser, login, googleAuth, facebookAuth };

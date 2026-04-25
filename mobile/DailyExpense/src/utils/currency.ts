@@ -1,6 +1,7 @@
-import { currencies, Currency } from "../constants/currencies";
+import { currencies } from "../constants/currencies";
+import { CurrencyBase } from "../types/types";
 
-const currencyMap = new Map<string, Currency>(
+const currencyMap = new Map<string, CurrencyBase>(
     currencies.map(c => [c.code, c])
 );
 

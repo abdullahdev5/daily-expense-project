@@ -1,9 +1,11 @@
-import dotenv from "dotenv";
-dotenv.config();
+// dotenv config
+import "dotenv/config";
 
 import express from "express";
 import { connect as connectDB, disconnect as disconnectDB } from "./config/db";
-import authRoutes from "./routes/authRoutes";
+import authRoutes from "./routes/auth.routes";
+import dashboardRoutes from "./routes/dashboard.routes";
+import userRoutes from "./routes/user.routes";
 import walletRoutes from "./routes/wallet.routes";
 import categoriesRoutes from "./routes/category.routes";
 import transactionRoutes from "./routes/transaction.routes";
@@ -27,6 +29,12 @@ app.use(express.json());
 authService.init();
 // auth routes
 app.use("/api/auth", authRoutes);
+
+// dashboard routes
+app.use('/api', dashboardRoutes);
+
+// user routes
+app.use('/api', userRoutes);
 
 // wallet routes
 app.use('/api', walletRoutes);

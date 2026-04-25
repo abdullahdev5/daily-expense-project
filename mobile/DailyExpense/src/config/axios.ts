@@ -3,7 +3,7 @@ import { ENV } from '../config/env';
 import { getToken } from '../storage/auth.storage';
 import { useSnackbarStore } from '../store/snackbarStore';
 import { ERRORS } from '../constants/errorConstants';
-import { logoutService } from '../services/auth.service';
+import { logoutService } from '../services/user.service';
 import { REQUEST_URL_CONSTANTS } from '../constants/apiConstants';
 import { ApiResponse } from '../types/api';
 

@@ -25,7 +25,7 @@ const AppText = ({
   const { theme } = useTheme();
 
   const finalColor = color ?? theme.colors.text;
-  const finalFontSize = fontSize ?? theme.fontSize.medium;
+  const finalFontSize = fontSize ?? theme.fontSize.small;
   const finalFontWeight = fontWeight ?? 'medium';
 
   return (

@@ -6,6 +6,7 @@ import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 export type RootStackParamList = {
     [ROUTES.auth]: NavigatorScreenParams<AuthStackParamList>;
     [ROUTES.app]: NavigatorScreenParams<AppStackParamList>;
+    [ROUTES.setBaseCurrency]: undefined;
 }
 
 export type AuthStackParamList = {

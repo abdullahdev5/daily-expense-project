@@ -19,25 +19,28 @@ import { useEffect } from 'react';
 import { userStore } from './store/userStore';
 import { getToken } from './storage/auth.storage';
 import { KeepAwake } from '@thehale/react-native-keep-awake';
-import AddCategoryScreen from './screens/app/AddCategoryScreen';
+import SocketManager from '@components/SocketManager';
 
 function App() {
-  // useEffect(() => {
-  //   const token = getToken();
+  useEffect(() => {
+    const token = getToken();
 
-  //   if (token) {
-  //     userStore.getState().getUser();
-  //   } else {
-  //     userStore.getState().setUser(undefined);
-  //   }
-  // }, []);
+    if (token) {
+      userStore.getState().getUser();
+    } else {
+      userStore.getState().setUser(undefined);
+    }
+  }, []);
 
   return (
     <ThemeProvider>
       <SafeAreaProvider>
         <GlobalSnackbar />
         <AppStatusBar />
-        <AppNavigator />
+
+        <SocketManager>
+          <AppNavigator />
+        </SocketManager>
 
         <KeepAwake />
       </SafeAreaProvider>

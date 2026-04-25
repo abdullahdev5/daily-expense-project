@@ -8,6 +8,7 @@ export interface User {
     picture: string;
     provider: AuthProvider;
     providerId: string;
+    baseCurrency?: string | null;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -26,6 +27,7 @@ export interface UserDTO {
     picture?: string;
     provider?: AuthProvider;
     providerId?: string;
+    baseCurrency?: string | null;
     createdAt?: string;
     updatedAt?: string;
 }

@@ -19,8 +19,8 @@ router.delete('/categories/delete/:id', protect, deleteCategory);
 router.get('/categories', protect, getCategoriesByType);
 
 // Update Category
-// PUT(/categories/update/:id)
-router.put('/categories/update/:id', protect, updateCategory);
+// POST (/categories/update/:id)
+router.post('/categories/update/:id', protect, updateCategory);
 
 
 

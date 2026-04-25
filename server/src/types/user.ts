@@ -8,6 +8,7 @@ export interface IUser extends Document {
   picture?: string | null;
   provider: AuthProvider,
   providerId?: string,
+  baseCurrency?: string | null;
 }
 
 export interface IUserMethods {

@@ -1,6 +1,6 @@
 import express from 'express';
 import { protect } from '../middleware/authMiddleware';
-import { login, registerUser, getUser, googleAuth, facebookAuth } from '../controllers/auth.controller';
+import { login, registerUser, googleAuth, facebookAuth } from '../controllers/auth.controller';
 import { upload } from '../config/multer';
 
 const router = express.Router();
@@ -21,10 +21,6 @@ router.post('/google', googleAuth);
 // Facebook Auth
 // POST (/facebook)
 router.post('/facebook', facebookAuth);
-
-// Get User
-// GET (/user)
-router.get('/user', protect, getUser);
 
 
 export default router;

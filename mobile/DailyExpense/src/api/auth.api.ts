@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { apiClient } from "../config/axios";
 import { ApiResponse } from "../types/api";
-import { AuthDataDTO, LoginPayload, RegisterPayload, UserDTO } from "../types/auth";
+import { AuthDataDTO, LoginPayload, RegisterPayload } from "../types/auth";
 import { REQUEST_URL_CONSTANTS } from "../constants/apiConstants";
 
 
@@ -36,13 +36,6 @@ export const facebookSignInApi = async (accessToken: string) => {
         REQUEST_URL_CONSTANTS.facebookAuth,
         { accessToken }
     );
-
-    return res.data;
-}
-
-
-export const getUserApi = async () => {
-    const res = await apiClient.get<ApiResponse<UserDTO>>(REQUEST_URL_CONSTANTS.user);
 
     return res.data;
 }

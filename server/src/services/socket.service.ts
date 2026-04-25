@@ -1,4 +1,5 @@
 import { Server } from "socket.io";
+import { SocketEvents } from "../types/socket";
 
 class SocketService {
 
@@ -10,9 +11,11 @@ class SocketService {
     }
 
 
-    emitToUser(userId: string, event: string, data: any) {
+    emitToUser<T>(userId: string, event: SocketEvents, data: T) {
         if (this.io) {
-            this.io.to(`user_${userId}`).emit(event, data);
+            this.io.to(userId).emit(event, data);
+        } else {
+            console.error(`SocketService: IO instance is not initailized!`);
         }
     }
 

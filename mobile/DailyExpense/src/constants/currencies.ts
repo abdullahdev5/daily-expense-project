@@ -2,7 +2,7 @@ import { DropdownItem } from "@components/Dropdown";
 import { CurrencyBase } from "../types/types";
 
 export const currencies = [
-  { code: 'PKR', name: 'Pakistani Rupee', symbol: '₨' },
+  { code: 'PKR', name: 'Pakistani Rupee', symbol: '₨.' },
   { code: 'USD', name: 'US Dollar', symbol: '$' },
   { code: 'EUR', name: 'Euro', symbol: '€' },
   { code: 'GBP', name: 'British Pound', symbol: '£' },
@@ -16,7 +16,7 @@ export const currencies = [
   { code: 'TRY', name: 'Turkish Lira', symbol: '₺' },
   { code: 'KRW', name: 'South Korean Won', symbol: '₩' },
   { code: 'SGD', name: 'Singapore Dollar', symbol: '$' },
-  { code: 'MYR', name: 'Malaysian Ringgit', symbol: 'RM' },
+  { code: 'MYR', name: 'Malaysian Ringgit', symbol: 'RM.' },
 ] as const satisfies readonly CurrencyBase[];
 
 

@@ -10,15 +10,15 @@ const router = Router();
 router.post('/wallets/create', protect, createWallet);
 
 // Get All Wallet
-// POST (/wallets)
+// GET (/wallets)
 router.get('/wallets', protect, getAllWallets);
 
 // Get Wallet
-// POST (/wallets/:id)
+// GET (/wallets/:id)
 router.get('/wallets/:id', protect, getWallet);
 
 // Delete Wallet
-// POST (/wallets/delete/:id)
+// DELETE (/wallets/delete/:id)
 router.delete('/wallets/delete/:id', protect, deleteWallet);
 
 
