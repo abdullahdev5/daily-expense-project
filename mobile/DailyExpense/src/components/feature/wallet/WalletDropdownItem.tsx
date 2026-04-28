@@ -19,16 +19,16 @@ const WalletDropdownItem = ({ item, selected }: WalletDropdownItem) => {
   const icon = useMemo<AllWalletTypesAndProviders | null>(() => {
     const data = item.data;
     if (data.type !== 'card' && data.type !== 'digital') {
-        return data.type;
+        return data.type as AllWalletTypesAndProviders;
     } else {
-        return data.provider;
+        return data.provider as AllWalletTypesAndProviders;
     }
   }, [item.data])
 
   return (
     <Column spacing={10} style={{ paddingVertical: 10, paddingHorizontal: 20 }}>
         <Row spacing={20}>
-            {icon && (<WalletIconRenderer icon={icon} />)}
+            {icon && (<WalletIconRenderer iconKey={icon} />)}
 
             <AppText>{item.label}</AppText>
         </Row>

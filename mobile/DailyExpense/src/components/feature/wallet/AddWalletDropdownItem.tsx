@@ -34,7 +34,7 @@ const AddWalletDropdownItem = ({ item, selected }: AddWalletDropdownItemProps) =
       )}
 
       <Row spacing={20}>
-        {item.icon && (<WalletIconRenderer icon={item.icon} />)}
+        {item.icon && (<WalletIconRenderer iconKey={item.icon as AllWalletTypesAndProviders} />)}
         <AppText>{item.label}</AppText>
       </Row>
     </Column>

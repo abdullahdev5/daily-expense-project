@@ -6,6 +6,7 @@ import { Document, QueryFilter, Types } from "mongoose";
 import { HttpError } from "../utils/errors.util";
 import { ITransaction } from "../types/transaction";
 import { Transaction } from "../models/Transaction";
+import { socketService } from "./socket.service";
 
 class WalletService {
 
@@ -18,6 +19,8 @@ class WalletService {
       userId,
       ...data
     });
+
+    this.emitNewWallet(userId, wallet);
 
     console.log('Wallet is Added: ', JSON.stringify(data));
 
@@ -66,6 +69,15 @@ class WalletService {
 
   public async getWalletByID(userId: string, walletId: string) {
     return Wallet.findOne({ userId, walletId });
+  }
+
+
+  private emitNewWallet(userId: string, newWallet: IWallet) {
+    socketService.emitToUser(userId, 'new_wallet', newWallet.toObject());
+  }
+
+  public emitWalletUpdate(userId: string, updatedWallet: IWallet) {
+    socketService.emitToUser(userId, 'wallet_update', updatedWallet.toObject());
   }
 }
 

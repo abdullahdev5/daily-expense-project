@@ -9,7 +9,9 @@ import { SOCKET_LISTENERS } from '../constants/socketConstants';
 import { DashboardResponse, DashboardResponseDTO } from '../types/dashboard';
 import { useDashboardStore } from '../store/useDashboardStore';
 import { Transaction, TransactionDTO } from '../types/transaction';
-import { mapDashboardResponse, mapTransaction } from '../utils/mapper';
+import { mapDashboardResponse, mapTransaction, mapWallet } from '../utils/mapper';
+import { WalletDTO } from '../types/wallet';
+import { useWalletStore } from '../store/useWalletStore';
 
 class SocketService {
   private socket: Socket | null = null;
@@ -52,6 +54,7 @@ class SocketService {
     // Setup Listeners
     this.setupDashboardListeners();
     this.setupTransactionsListener();
+    this.setupWalletListener();
 
     this.socket.on('connect', () => {
       console.log('Socket Connected Successfully');
@@ -116,6 +119,34 @@ class SocketService {
         }
       },
     );
+  }
+
+  private setupWalletListener() {
+    if (!this.socket) return;
+
+    this.socket.on(
+      SOCKET_LISTENERS.newWallet,
+      (newWalletDTO: WalletDTO) => {
+        const store = useWalletStore.getState();
+        const newMappedWallet = mapWallet(newWalletDTO);
+
+        console.log('Socket: New Wallet: ', JSON.stringify(newWalletDTO));
+
+        store.addWallet(newMappedWallet);
+      }
+    )
+
+    this.socket.on(
+      SOCKET_LISTENERS.walletUpdate,
+      (updatedWalletDTO: WalletDTO) => {
+        const updatedMappedWallet = mapWallet(updatedWalletDTO);
+        const store = useWalletStore.getState();
+
+        console.log('Socket: Wallet Update (updated Wallet): ', JSON.stringify(updatedWalletDTO));
+
+        store.updateWallet(updatedMappedWallet);
+      }
+    )
   }
 
   disconnect() {

@@ -13,6 +13,7 @@ import { dashboardService } from "./dashboard.service";
 import { SOCKET_EVENTS } from "../constants/socketEvents";
 import { getMerchantLogoDomain, getMerchantLogoUrl } from "../utils/transaction.utils";
 import { User } from "../models/User";
+import { walletService } from "./wallet.service";
 
 class TransactionService {
   // Add Transaction
@@ -72,6 +73,7 @@ class TransactionService {
             newTransactionObj
           ),
           dashboardService.emitDashboardUpdate(userId, user.baseCurrency),
+          walletService.emitWalletUpdate(userId, wallet)
         ])
       }
     } catch (socketError) {

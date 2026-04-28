@@ -21,6 +21,7 @@ import TransactionTile from '@components/feature/transaction/TransactionTile';
 import AppActivityLoader from '@components/Loader';
 import { getCurrencySymbol } from '../../../utils/currency';
 import { useDashboardStore } from '../../../store/useDashboardStore';
+import BalanceComponent from '@components/feature/wallet/BalanceComponent';
 
 const HomeScreen = () => {
   const { theme } = useTheme();
@@ -29,7 +30,7 @@ const HomeScreen = () => {
   const dashboardData = useDashboardStore(s => s.data);
 
   const totalBalance = dashboardData?.totalBalance ?? 0;
-  const baseCurrency = dashboardData?.baseCurrency ?? '';
+  const baseCurrency = dashboardData?.baseCurrency ?? 'PKR';
   const topCategories = dashboardData?.topCategories ?? [];
   const recentTransactions = dashboardData?.recentTransactions ?? [];
 
@@ -78,9 +79,10 @@ const HomeScreen = () => {
             Available Balance
           </AppText>
 
-          <AppText fontSize={theme.fontSize.large}>
-            {getCurrencySymbol(baseCurrency) + totalBalance}
-          </AppText>
+          <BalanceComponent
+            balance={totalBalance}
+            currency={baseCurrency}
+          />
         </Column>
       </Column>
 

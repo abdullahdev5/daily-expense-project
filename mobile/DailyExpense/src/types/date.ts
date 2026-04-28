@@ -6,6 +6,7 @@ export type DateTimeFormat = 'dd, mm, yyyy'
     | 'MMMM dd, yyyy'
     | 'h:mm a.m/p.m. | MMM dd, yyyy'
     | 'h:mm a.m/p.m. | MMMM dd, yyyy'
+    | 'mm/dd'
     | 'toISOString';
 
 

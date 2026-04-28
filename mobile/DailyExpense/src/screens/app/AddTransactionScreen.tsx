@@ -56,21 +56,24 @@ import { AppNavigation } from '../../navigation/types';
 import AppFAB from '@components/FAB';
 import AppActivityLoader from '@components/Loader';
 import { ThemeType } from '../../theme';
+import { useWalletStore } from '../../store/useWalletStore';
 
 const AddTransactionScreen = () => {
   const { theme } = useTheme();
   const formikRef = useRef<FormikProps<CreateTransactionFormValues>>(null);
   const showSnackbar = useSnackbarStore(s => s.showSnackbar);
+  const fetchWallets = useWalletStore((s) => s.fetchWallets);
+  const walletsDisplay = useWalletStore((s) => s.wallets);
+  const isWalletsDisplayLoading = useWalletStore((s) => s.isLoading);
+  const [selectedWallet, setWallet] = useState<Wallet | null>(null);
   const navigation = useNavigation<AppNavigation>();
   const inputsRef = useRef<Partial<Record<keyof CreateTransactionFormValues, TextInput | null>>>({});
 
   const types = Object.values(TransactionTypes);
   const [selectedType, setSelectedType] = useState<TransactionType>('expense');
   const insets = useSafeAreaInsets();
-  const [categories, setCategories] = useState<Category[] | null>(null);
-  const [isCategoriesLoading, setCategoriesLoading] = useState<boolean>(false);
-  const [wallets, setWallets] = useState<Wallet[] | null>(null);
-  const [selectedWallet, setWallet] = useState<Wallet | null>(null);
+  const [categoriesDisplay, setCategoriesDisplay] = useState<Category[] | null>(null);
+  const [isCategoriesDisplayLoading, setCategoriesDisplayLoading] = useState<boolean>(false);
   const [isDateTimePickerOpen, setDateTimePickerOpen] =
     useState<boolean>(false);
   const [selectedDate, setDate] = useState<Date>(new Date());
@@ -79,35 +82,35 @@ const AddTransactionScreen = () => {
     useState<boolean>(false);
 
   const showCategories = useMemo(
-    () => categories && categories.length !== 0,
-    [categories],
+    () => categoriesDisplay && categoriesDisplay.length !== 0,
+    [categoriesDisplay],
   );
 
-  const showWallets = useMemo(() => wallets && wallets.length !== 0, [wallets]);
+  const showWallets = useMemo(() => walletsDisplay && walletsDisplay.length !== 0, [walletsDisplay]);
 
   const categoriesDropdownData = useMemo<DropdownItem<Category>[]>(() => {
-    if (!categories || categories.length === 0) {
+    if (!categoriesDisplay || categoriesDisplay.length === 0) {
       return [];
     }
 
-    return categories?.map(c => ({
+    return categoriesDisplay?.map(c => ({
       label: c.name,
       value: c.id,
       data: c,
     }));
-  }, [categories]);
+  }, [categoriesDisplay]);
 
   const walletsDropdownData = useMemo<DropdownItem<Wallet>[]>(() => {
-    if (!wallets || wallets.length === 0) {
+    if (!walletsDisplay || walletsDisplay.length === 0) {
       return [];
     }
 
-    return wallets.map(w => ({
+    return walletsDisplay.map(w => ({
       label: w.name,
       value: w.id,
       data: w,
     }));
-  }, [wallets]);
+  }, [walletsDisplay]);
 
   const categoriesAnimatedStyle = useAnimatedStyle(() => {
     const duration = 300;
@@ -163,39 +166,35 @@ const AddTransactionScreen = () => {
   }, [selectedDate]);
 
   const getCategories = async () => {
-    setCategoriesLoading(true);
+    setCategoriesDisplayLoading(true);
     const res = await getCategoriesService(selectedType);
 
     if (!res.success) {
       /* return  */ showSnackbar(res.message, { type: 'error' });
-      setCategoriesLoading(false);
+      setCategoriesDisplayLoading(false);
     }
 
     const data = res.data;
 
     if (data) {
-      setCategories(data);
-      setCategoriesLoading(false);
+      setCategoriesDisplay(data);
+      setCategoriesDisplayLoading(false);
     }
   };
 
   const getWallets = async () => {
-    const res = await getWalletsService();
+    if (walletsDisplay.length > 0) return;
+
+    const res = await fetchWallets();
 
     if (!res.success) {
-      /* return  */ showSnackbar(res.message, { type: 'error' });
-    }
-
-    const data = res.data;
-
-    if (data) {
-      setWallets(data);
+      return showSnackbar(res.message, { type: 'error' });
     }
   };
 
   const isFormReady = useMemo(
-    () => categories && wallets && !isCategoriesLoading,
-    [categories, wallets, isCategoriesLoading]
+    () => categoriesDisplay && walletsDisplay.length !== 0 && !isCategoriesDisplayLoading && !isWalletsDisplayLoading,
+    [categoriesDisplay, walletsDisplay, isCategoriesDisplayLoading, isWalletsDisplayLoading]
   );
 
   const createTransaction = async (data: CreateTransactionPayload) => {
@@ -258,7 +257,7 @@ const AddTransactionScreen = () => {
                       theme={theme}
                       isSelected={isSelected}
                       onPress={() => {
-                        if (type === selectedType || isCategoriesLoading) {
+                        if (type === selectedType || isCategoriesDisplayLoading) {
                           return;
                         }
 

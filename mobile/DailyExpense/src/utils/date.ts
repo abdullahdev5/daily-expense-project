@@ -54,6 +54,9 @@ export const toFormattedDateTime = (
       return `${displayHours}:${displayMinutes} ${period} | ${fullMonthNames.at(
         month,
       )} ${displayDay}, ${displayYear}`;
+    
+    case 'mm/dd':
+      return `${displayMonth}/${displayDay}`
 
     case 'toISOString':
         return d.toISOString();

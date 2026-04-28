@@ -18,6 +18,7 @@ import AppText from '@components/Text';
 import { categoryColorsDropdownData } from '../../../constants/categoryConstants';
 import { toFormattedDateTime } from '../../../utils/date';
 import { getCurrencySymbol } from '../../../utils/currency';
+import AmountComponent from './AmountComponent';
 
 export type TransactionTileProps = {
   transaction: Transaction;
@@ -31,18 +32,6 @@ const TransactionTile = ({
   style,
 }: TransactionTileProps) => {
   const { theme } = useTheme();
-
-  const amountDisplay = useMemo(() => {
-    const amount = transaction.amount;
-    const type = transaction.type;
-    const symbol = getCurrencySymbol(transaction.currency);
-
-    if (type === 'expense') {
-      return '-' + symbol + amount;
-    } else {
-      return symbol + amount;
-    }
-  }, [transaction]);
 
   const containerStyle: ViewStyle = {
     borderTopLeftRadius: theme.radius.lg,
@@ -118,7 +107,11 @@ const TransactionTile = ({
               },
             ]}
           >
-            <AppText fontSize={theme.fontSize.xSmall}>{amountDisplay}</AppText>
+            <AmountComponent
+              amount={transaction.amount}
+              currency={transaction.currency}
+              type={transaction.type}
+            />
           </View>
         </Row>
 

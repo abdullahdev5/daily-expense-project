@@ -1,11 +1,26 @@
-import { useTheme } from "../../../theme/ThemeProvider";
-import { AllWalletTypesAndProviders } from "../../../types/wallet";
-import { getWalletIcon } from "../../../utils/wallet.utils";
+import { useTheme } from '../../../theme/ThemeProvider';
+import {
+  AllWalletProviders,
+  AllWalletTypesAndProviders,
+  WalletType,
+} from '../../../types/wallet';
+import { getWalletIcon } from '../../../utils/wallet.utils';
 
-const WalletIconRenderer = ({ icon }: { icon: string }) => {
-    const { theme } = useTheme();
+type WalletIconRendererProps = {
+  iconKey: AllWalletTypesAndProviders;
+  color?: string;
+  size?: number;
+};
 
-    return getWalletIcon(icon as AllWalletTypesAndProviders, theme.colors.text);
-}
+const WalletIconRenderer = ({
+  iconKey,
+  color,
+  size,
+}: WalletIconRendererProps) => {
+  const { theme } = useTheme();
+  const finalColor = color ?? theme.colors.text;
+
+  return getWalletIcon(iconKey, finalColor, size);
+};
 
 export default WalletIconRenderer;

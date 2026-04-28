@@ -5,7 +5,7 @@ export interface Wallet {
     id: string;
     name: string;
     type: WalletType;
-    provider: AllWalletProviders | null;
+    provider?: AllWalletProviders | null;
     balance: number;
     currency: string;
     createdAt: Date;
@@ -51,3 +51,8 @@ export type CreateWalletPayload = {
     provider?: string | null;
     currency: string;
 };
+
+export interface WalletVisuals {
+    colors: string[];
+    textColor: string;
+}

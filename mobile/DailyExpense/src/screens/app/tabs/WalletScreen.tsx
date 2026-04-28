@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import React, { JSX, useEffect, useMemo, useRef, useState } from 'react';
 import AppScreen from '../../../components/AppScreen';
 import AppText from '../../../components/Text';
@@ -11,6 +11,7 @@ import AppFormInput from '@components/FormInput';
 import { Formik, FormikProps, useFormikContext } from 'formik';
 import {
   AllWalletProviders,
+  AllWalletTypesAndProviders,
   CreateWalletPayload,
   WalletType,
 } from '../../../types/wallet';
@@ -35,13 +36,91 @@ import { useSnackbarStore } from '../../../store/snackbarStore';
 import { createWalletService } from '../../../services/wallet.service';
 import AppActivityLoader from '@components/Loader';
 import { colors } from '../../../theme/colors';
+import { useWalletStore } from '../../../store/useWalletStore';
+import WalletStack from '@components/feature/wallet/WalletStack';
+import { useDashboardStore } from '../../../store/useDashboardStore';
+import { fontSize } from '../../../theme/typography';
+import BalanceComponent from '@components/feature/wallet/BalanceComponent';
 
 const WalletScreen = () => {
   const { theme } = useTheme();
   const showSnackbar = useSnackbarStore(s => s.showSnackbar);
+  const fetchWallets = useWalletStore(s => s.fetchWallets);
+  const walletsDisplay = useWalletStore(s => s.wallets);
+  const totalBalance = useDashboardStore((s) => s.data?.totalBalance ?? 0);
+  const baseCurrency = useDashboardStore((s) => s.data?.baseCurrency ?? 'PKR');
+  const isWalletsDisplayLoading = useWalletStore(s => s.isLoading);
+
+  useEffect(() => {
+    getWallets();
+  }, []);
+
+  const getWallets = async () => {
+    if (walletsDisplay.length > 0) return;
+
+    const res = await fetchWallets();
+
+    if (!res.success) {
+      return showSnackbar(res.message, { type: 'error' });
+    }
+  };
+
+  return (
+    <AppScreen>
+      <AppBar title="Wallet" showBackButton={false} />
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {isWalletsDisplayLoading && (
+          <AppActivityLoader style={{ alignSelf: 'center' }} />
+        )}
+
+        {walletsDisplay.length === 0 && (
+          <AppText
+            color={theme.colors.primary}
+            style={{
+              alignSelf: 'center',
+              textAlign: 'center',
+            }}
+          >
+            You have No Wallets!
+          </AppText>
+        )}
+
+        {walletsDisplay.length !== 0 && (
+          <WalletStack wallets={walletsDisplay} />
+        )}
+
+        <View style={{
+          padding: 20,
+          alignSelf: 'center',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <BalanceComponent
+            balance={totalBalance}
+            currency={baseCurrency}
+          />
+          <AppText
+            color={colors.grey}
+            fontSize={theme.fontSize.small}
+          >Available balance</AppText>
+        </View>
+
+        {/* Create Wallet Card */}
+        <AddWalletForm />
+      </ScrollView>
+    </AppScreen>
+  );
+};
+
+const AddWalletForm = (): React.JSX.Element => {
+  const showSnackbar = useSnackbarStore(s => s.showSnackbar);
+
   const [isCreateWalletLoading, setCreateWalletLoading] =
     useState<boolean>(false);
   const formikRef = useRef<FormikProps<CreateWalletPayload>>(null);
+
+  const addWalletToStore = useWalletStore(s => s.addWallet);
 
   const createWallet = async (values: CreateWalletPayload) => {
     setCreateWalletLoading(true);
@@ -52,6 +131,12 @@ const WalletScreen = () => {
       // Success
       setCreateWalletLoading(false);
       formikRef.current?.resetForm(); // Resetting Form
+
+      // Add Wallet to Store
+      if (res.data) {
+        addWalletToStore(res.data);
+      }
+
       return showSnackbar(res.message, { type: 'success' });
     } else {
       // Error
@@ -61,32 +146,27 @@ const WalletScreen = () => {
   };
 
   return (
-    <AppScreen>
-      <AppBar title="Wallet" showBackButton={false} />
-
-      {/* Create Wallet Card */}
-      <Formik<CreateWalletPayload>
-        innerRef={formikRef}
-        initialValues={{
-          name: '',
-          type: 'cash',
-          provider: null,
-          currency: 'PKR',
-        }}
-        onSubmit={async values => {
-          console.log(`Add Wallet Values: ${JSON.stringify(values)}`);
-          await createWallet(values);
-        }}
-      >
-        {({ handleSubmit, submitCount }) => (
-          <AddWalletFormContent
-            handleSubmit={handleSubmit}
-            submitCount={submitCount}
-            isCreateWalletLoading={isCreateWalletLoading}
-          />
-        )}
-      </Formik>
-    </AppScreen>
+    <Formik<CreateWalletPayload>
+      innerRef={formikRef}
+      initialValues={{
+        name: '',
+        type: 'cash',
+        provider: null,
+        currency: 'PKR',
+      }}
+      onSubmit={async values => {
+        console.log(`Add Wallet Values: ${JSON.stringify(values)}`);
+        await createWallet(values);
+      }}
+    >
+      {({ handleSubmit, submitCount }) => (
+        <AddWalletFormContent
+          handleSubmit={handleSubmit}
+          submitCount={submitCount}
+          isCreateWalletLoading={isCreateWalletLoading}
+        />
+      )}
+    </Formik>
   );
 };
 
@@ -190,7 +270,11 @@ const AddWalletFormContent = ({
             <AddWalletDropdownItem item={item} selected={selected} />
           )}
           renderLeftSelectedIcon={item =>
-            item.icon ? <WalletIconRenderer icon={item.icon} /> : null
+            item.icon ? (
+              <WalletIconRenderer
+                iconKey={item.icon as AllWalletTypesAndProviders}
+              />
+            ) : null
           }
         />
 
@@ -217,7 +301,11 @@ const AddWalletFormContent = ({
                 <AddWalletDropdownItem item={item} selected={selected} />
               )}
               renderLeftSelectedIcon={item =>
-                item.icon ? <WalletIconRenderer icon={item.icon} /> : null
+                item.icon ? (
+                  <WalletIconRenderer
+                    iconKey={item.icon as AllWalletTypesAndProviders}
+                  />
+                ) : null
               }
             />
           </Animated.View>
@@ -241,7 +329,10 @@ const AddWalletFormContent = ({
           {isCreateWalletLoading ? (
             <AppActivityLoader size={'small'} color={colors.white} />
           ) : (
-            'Create'
+            <Row spacing={5}>
+              <AppIcon name='add' />
+              <AppText color={colors.white}>Create</AppText>
+            </Row>
           )}
         </AppButton>
       </Column>
